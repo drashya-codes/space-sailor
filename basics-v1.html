@@ -70,12 +70,6 @@ frame.on("ready", function() {
 
         spaceship.centerReg();
 
-        // 6. Create a ZIM series of five objects:
-        // four Circles with a Rectangle in the middle.
-        // Two white circles with 15 radius
-        // and two black circles with 10 radius
-        // The rectangle is 30x150 and is white with a corner of 10
-        
         var s = series(orbiter, tank, rockets);
 
         var parts = new Tile(s, 3, 1, 30)
@@ -90,7 +84,7 @@ frame.on("ready", function() {
                 time:200
             });
         
-        var a = [1,2,3];
+        // var a = [1,2,3];
         // a.loop(function (element) {
         // 
         // })
@@ -110,19 +104,19 @@ frame.on("ready", function() {
             if (count == parts.numChildren) {
                 zog("done");
             }
-        })
 
+            if(count == parts.numChildren){
+                spaceship.mouseChildren = false;
 
-            // 8b. Set the mouseChildren property of skunk to false
-            // this will stop the drag on the parts
-            // Animate the skunk off the bottom of the stage
-            // after waiting 500ms - a time of 2000ms is fine
-            // When the animation is done call makePath
-            
-            
+                spaceship.animate({
+                    props: {y:  150 - stageH},
+                    wait: 500,
+                    time: 2000,
+                });
+            }
+        });
 
-
-        makePath();
+        // makePath();
         stage.update();
     } // end function makeSkunk
 
