@@ -13,7 +13,7 @@ var scaling = "fit"; // this will resize to fit inside the screen dimensions
 var width = 1280;
 var height = 720;
 var color = dark;
-var outerColor = dark;
+var outerColor = light;
 var assets = ["Rockets.png", "Orbiter.png", "Tank.png"];
 var path = "assets/";
 
@@ -26,27 +26,27 @@ frame.on("ready", function() {
     var stageH = frame.height;
 
     var starsContainer = new Container(stageW*1.3, stageH*1.3).center();
-        
+
     var stars = new Circle(18, yellow).centerReg();
-    
+
     var planet = new Circle (stageW, grey)
         .center()
         .top()
         .pos(0,550,CENTER,TOP)
         .linearGradient([red, orange], [1,0], 0,0, stageW,0);
-    
+
     loop(60, function(){
         stars
         .clone()
         .sca(rand(0.1, 0.2, 0.5))
         .alp(0.5)
         .loc(rand(starsContainer.width), rand(starsContainer.height), starsContainer);
-        
+
         if(stars.hitTestCircle(stars, 15)){
             stars.removeFrom();
         }
     });
-    
+
     new Scroller(starsContainer);
 
     var instructions = new Label({
@@ -83,16 +83,16 @@ frame.on("ready", function() {
                 sequence:250,
                 time:200
             });
-        
+
         // var a = [1,2,3];
         // a.loop(function (element) {
-        // 
+        //
         // })
-        
+
         // loop(a, function (element) {
-            
+
         // })
-        
+
         parts.on("pressup", function(){
             var count = 0;
             parts.loop(function (part) {
