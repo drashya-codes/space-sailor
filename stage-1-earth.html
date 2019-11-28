@@ -4,6 +4,10 @@
 <meta charset="utf-8" />
 <title>Space Sailor</title>
 
+<style>
+    @import url('https://fonts.googleapis.com/css?family=Bubblegum+Sans&display=swap');
+</style> 
+
 <script src="https://zimjs.org/cdn/1.2.3/createjs_min.js"></script>
 <script src="https://zimjs.org/cdn/10.6.1/zim.js"></script>
 
@@ -52,10 +56,11 @@ frame.on("ready", function() {
 
     var instructions = new Label({
         text:"Try making a spaceship and help it fly",
+        font: "Bubblegum Sans",
         color:white,
         backgroundColor:dark,
         paddingHorizontal:100,
-        size:30,
+        size:48,
         align:"center"
     }).centerReg().alp(.8).pos(0,30,CENTER);
 
