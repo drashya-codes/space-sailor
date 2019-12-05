@@ -18,7 +18,7 @@ var width = 1280;
 var height = 720;
 var color = dark;
 var outerColor = dark;
-var assets = ["Rockets.png", "Orbiter.png", "Tank.png", "baseTank.png"];
+var assets = ["Rockets.png", "Orbiter.png", "Tank.png", "baseTank.png", "earth.png", "mars.png"];
 var path = "assets/";
 
 var frame = new Frame(scaling, width, height, color, outerColor, assets, path);
@@ -34,11 +34,16 @@ frame.on("ready", function() {
         
     var stars = new Circle(18, yellow).centerReg();
     
-    var planet = new Circle (stageW, grey)
+    var planet = frame.asset("earth.png").sca(1)
         .center()
         .top()
-        .pos(0,550,CENTER,TOP)
-        .linearGradient([red, orange], [1,0], 0,0, stageW,0);
+        .pos(0,150,CENTER,TOP);
+    
+    // var planet = new Circle (stageW, grey)
+    //     .center()
+    //     .top()
+    //     .pos(0,550,CENTER,TOP)
+    //     .linearGradient([red, orange], [1,0], 0,0, stageW,0);
     
     loop(60, function(){
         stars
@@ -58,22 +63,25 @@ frame.on("ready", function() {
         text:"Try making a spaceship and help it fly",
         font: "Bubblegum Sans",
         color:white,
-        backgroundColor:dark,
+        // backgroundColor:dark,
         paddingHorizontal:100,
-        size:48,
+        size:56,
         align:"center"
-    }).centerReg().alp(.8).pos(0,30,CENTER);
+    }).centerReg().alp(.9).pos(0,30,CENTER);
 
     var spaceship;
+
     makeSpaceShip();
     function makeSpaceShip() {
 
         spaceship = new Container();
 
-        var orbiter = frame.asset("Orbiter.png").sca(1).drag().center(spaceship);
+        var orbiter = frame.asset("Orbiter.png").sca(0.3).drag().center(spaceship);
         var baseTank = frame.asset("baseTank.png").sca(1).center(spaceship).alp(0.5);
-        var rockets = frame.asset("Rockets.png").sca(1).drag();
-        var tank = frame.asset("Tank.png").sca(1).drag();
+        // baseTank.x = baseTank.startX = stageW;
+        // baseTank.y = baseTank.startY = stageH;
+        var rockets = frame.asset("Rockets.png").sca(0.3).drag();
+        var tank = frame.asset("Tank.png").sca(0.3).drag();
 
         spaceship.centerReg();
 
@@ -96,27 +104,93 @@ frame.on("ready", function() {
             parts.loop(function (part) {
                 if (part.hitTestBounds(baseTank)) {
                     // zog("hitting");
-                    zog(part.id);
+                    // zog(part.id);
+                    // zog(count);
                     count++;
+                    // tank.x = baseTank.x;
+                    // zog(tank.x);
+                    baseTank.animate({
+                        props:{alpha:0.1}
+                    });
                 }
             })
-            if (count == parts.numChildren) {
-                zog("done");
-            }
 
             if(count == parts.numChildren){
+                zog("Done");
+                // zog(count);
+                // zog(parts.numChildren);
                 spaceship.mouseChildren = false;
-
                 spaceship.animate({
                     props: {y:  150 - stageH},
                     wait: 500,
+                    // ease: "linear",
                     time: 2000,
                 });
+                planet.animate({
+                    props: {y: 150 + stageH},
+                    wait: 400,
+                    time: 2000,
+                    call:function (){
+                        stageMars();
+                    }
+                });
+                // stageMars();
             }
         });
 
         stage.update();
     } // end function makeSpaceShip
+
+    // stageMars();
+    function stageMars(){
+        instructions.text = "We are on Mercury. It's hot here."
+
+        var backdropMars = new Rectangle(stageW, stageH).linearGradient(["#3f296a", "#040313"], [0,1], 1,1, stageW, 0).addTo().bot();
+
+        var starsContainerMars = new Container(stageW*1.3, stageH*1.3).center();
+            
+        var starsMars = new Circle(18, white).centerReg();
+        
+        var planetMars = frame.asset("mars.png").sca(0.7)
+            .center()
+            .top()
+            .pos(0,300,CENTER,TOP);
+        
+        // var planet = new Circle (stageW, grey)
+        //     .center()
+        //     .top()
+        //     .pos(0,550,CENTER,TOP)
+        //     .linearGradient([red, orange], [1,0], 0,0, stageW,0);
+        
+        loop(60, function(){
+            starsMars
+            .clone()
+            .sca(rand(0.1, 0.2, 0.5))
+            .alp(0.5)
+            .loc(rand(starsContainerMars.width), rand(starsContainerMars.height), starsContainerMars);
+            
+            if(starsMars.hitTestCircle(starsMars, 15)){
+                starsMars.removeFrom();
+            }
+        });
+    
+        new Scroller(starsContainerMars);
+
+        var marsSpaceship = spaceship
+        .clone().addTo(backdropMars)
+        .rot(-90)
+        .top();
+        // .addTo(starsContainerMars)
+        
+        
+        marsSpaceship.animate({
+            ease:"linear"
+        });
+
+    }
+
+
+    stage.update();
 
 }); // end of ready
 
