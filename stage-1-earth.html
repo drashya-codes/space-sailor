@@ -9,7 +9,7 @@
 </style> 
 
 <script src="https://zimjs.org/cdn/1.2.3/createjs_min.js"></script>
-<script src="https://zimjs.org/cdn/10.6.1/zim.js"></script>
+<script src="https://zimjs.org/cdn/10.7.0/zim.js"></script>
 
 <script>
 
@@ -18,7 +18,7 @@ var width = 1280;
 var height = 720;
 var color = dark;
 var outerColor = dark;
-var assets = ["Rockets.png", "Orbiter.png", "Tank.png", "baseTank.png", "earth.png", "mars.png"];
+var assets = ["Rockets.png", "Orbiter.png", "Tank.png", "baseTank.png", "earth.png", "mars.png", "coolingPod.png"];
 var path = "assets/";
 
 var frame = new Frame(scaling, width, height, color, outerColor, assets, path);
@@ -130,9 +130,7 @@ frame.on("ready", function() {
                     props: {y: 150 + stageH},
                     wait: 400,
                     time: 2000,
-                    call:function (){
-                        stageMars();
-                    }
+                    call: stageMars,
                 });
                 // stageMars();
             }
@@ -176,16 +174,42 @@ frame.on("ready", function() {
     
         new Scroller(starsContainerMars);
 
-        var marsSpaceship = spaceship
-        .clone().addTo(backdropMars)
-        .rot(-90)
-        .top();
-        // .addTo(starsContainerMars)
+
+        spaceship
+            .sca(0.6)
+            .rot(-180)
+            .top()
+            .animate({
+                props:{y: 400},
+                ease:"linear"
+            });
+        
+        // var coolingPod = frame.asset("coolingPod.png").sca(0.5);
+
+        // var seriesMars = series(spaceship, coolingPod);
+
+        // var parts = new Tile(seriesMars, 2, 1, 20)
+        //     .center(spaceship)
+        //     .mov(0,250)
+        //     .drag()
+        //     .animate({
+        //         from:true,
+        //         wait:500,
+        //         props:{alpha:0},
+        //         sequence:250,
+        //         time:200
+        //     });
+
+        // var marsSpaceship = spaceship
+        // .clone().addTo(backdropMars)
+        // .rot(-90)
+        // .top();
+        // // .addTo(starsContainerMars)
         
         
-        marsSpaceship.animate({
-            ease:"linear"
-        });
+        // marsSpaceship.animate({
+        //     ease:"linear"
+        // });
 
     }
 
