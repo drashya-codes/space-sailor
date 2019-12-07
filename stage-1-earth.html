@@ -181,30 +181,31 @@ frame.on("ready", function() {
             .top()
             .animate({
                 props:{y: 400},
-                ease:"linear"
+                ease:"linear",
+                time: 2000,
             });
         
-        // var coolingPod = frame.asset("coolingPod.png").sca(0.5);
+        var coolingPod = frame.asset("coolingPod.png").sca(0.5);
 
-        // var seriesMars = series(spaceship, coolingPod);
+        var seriesMars = series(coolingPod);
 
-        // var parts = new Tile(seriesMars, 2, 1, 20)
-        //     .center(spaceship)
-        //     .mov(0,250)
-        //     .drag()
-        //     .animate({
-        //         from:true,
-        //         wait:500,
-        //         props:{alpha:0},
-        //         sequence:250,
-        //         time:200
-        //     });
+        var parts = new Tile(seriesMars, 2, 1, 20)
+            .center(spaceship)
+            .mov(0,250)
+            .drag()
+            .animate({
+                from:true,
+                wait:500,
+                props:{alpha:0},
+                sequence:250,
+                time:2000
+            });
 
-        // var marsSpaceship = spaceship
-        // .clone().addTo(backdropMars)
-        // .rot(-90)
-        // .top();
-        // // .addTo(starsContainerMars)
+        var marsSpaceship = spaceship
+        .clone().addTo(backdropMars)
+        .rot(-90)
+        .top();
+        // .addTo(starsContainerMars)
         
         
         // marsSpaceship.animate({
