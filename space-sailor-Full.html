@@ -19,7 +19,7 @@ var height = 720;
 var color = dark;
 var outerColor = dark;
 var assets = ["Rockets.png", "Orbiter.png", "Tank.png", "baseTank.png", "earth.png", "mars.png", "mercury.png", "coolingPod.png", "body.png", "wheels.png", "radar.png", "scope.png", "baseBody.png"];
-var path = "assets/";
+var path = "Final-assets/";
 
 var frame = new Frame(scaling, width, height, color, outerColor, assets, path);
 frame.on("ready", function() {
@@ -60,14 +60,13 @@ frame.on("ready", function() {
     new Scroller(starsContainer);
 
     var instructions = new Label({
-        text:"Try making a spaceship and help it fly",
+        text:"Join the parts and help it fly",
         font: "Bubblegum Sans",
         color:white,
-        // backgroundColor:dark,
         paddingHorizontal:100,
-        size:56,
+        size:72,
         align:"center"
-    }).centerReg().alp(.9).pos(0,30,CENTER);
+    }).centerReg().alp(1).pos(0,30,CENTER);
 
     var spaceship;
     var hitRectangle;
@@ -83,7 +82,7 @@ frame.on("ready", function() {
         var tank = frame.asset("Tank.png").sca(0.3).drag().alp(0);
         // var rockets = frame.asset("Rockets.png").sca(0.3).drag().centerReg(rocketContainer);
 
-        var baseTank = frame.asset("baseTank.png").sca(1).centerReg().alp(0.5);
+        var baseTank = frame.asset("baseTank.png").sca(0.3).centerReg().alp(0.5);
         hitRectangle = new Rectangle(200, 50).alp(0).centerReg();
         // var hitCircleInRocket = new Circle().alp(1).centerReg(rocketContainer);
 
