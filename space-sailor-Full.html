@@ -178,7 +178,7 @@ frame.on("ready", function() {
     
         new Scroller(starsContainerMercury);
 
-        var coolingPod = frame.asset("coolingPod.png").sca(0.3).alp(0).drag();
+        var coolingPod = frame.asset("coolingPod.png").sca(0.5).alp(0).drag();
         var coolingPodClone = coolingPod.clone().drag()
         var seriesMercury = series(coolingPod, coolingPodClone);
 
@@ -200,7 +200,7 @@ frame.on("ready", function() {
                     coolingPodEnter();
                     smoke.removeFrom(spaceship)
                 }
-            }).sca(0.6);
+            }).sca(0.8);
         
         function coolingPodEnter(){
             var parts = new Tile(seriesMercury, 2, 1, 20)
@@ -274,13 +274,13 @@ frame.on("ready", function() {
 
         var roverContainer = new Container(stageW, stageH).addTo();
 
-        var body = frame.asset("body.png").sca(0.5).drag().alp(0);
-        var wheels = frame.asset("wheels.png").sca(0.5).drag().alp(0);
-        var radar = frame.asset("radar.png").sca(0.5).drag().alp(0);
-        var scope = frame.asset("scope.png").sca(0.5).drag().alp(0);
-        var baseBody = frame.asset("baseBody.png").sca(0.5).alp(0.8).centerReg(roverContainer).mov(-250,50).rot(-20);
+        var body = frame.asset("body.png").sca(0.8).drag().alp(0);
+        var wheels = frame.asset("wheels.png").sca(0.8).drag().alp(0);
+        var radar = frame.asset("radar.png").sca(0.8).drag().alp(0);
+        var scope = frame.asset("scope.png").sca(0.8).drag().alp(0);
+        var baseBody = frame.asset("baseBody.png").sca(0.8).alp(0.8).centerReg(roverContainer).mov(-250,50).rot(-20);
         // hitRectangle = new Rectangle(200, 50).alp(1).centerReg();
-        hitRectangle.rot(90);
+        hitRectangle.mov(-250,50).rot(90);
         hitRectangle.width = 300;
 
         spaceship            
@@ -289,12 +289,55 @@ frame.on("ready", function() {
             .animate({
                 props:{x:1000, y: 200},
                 ease:"linear",
-                time: 3500,
+                time: 1000
             })
             .wiggle({
                 baseAmount: 20,
                 minAmount: 10,
                 maxAmount: 30
+            });
+        
+
+            var dogPath = new Squiggle({
+                points: 2,
+
+                // points : [
+                //     [127.4,24.8,0,0,-3.9,-4.2,3.9,4.2],
+                //     [126.8,52.5,0,0,-1,-24.8,1,24.8],
+                //     [180,-7.2,0,0,-49.5,-7.5,49.5,7.5],
+                //     [190.8,87.4,1,-2,12,-25.1,-10.1,21.2],
+                //     [205.2,77.8,0,0,-19.2,3.9,19.2,-3.9]
+                // ],
+
+                color: white,
+                // length:900,
+                // interactive:false,
+                showControls: false,
+                thickness: 2,
+                onTop: false,
+                // strokeObj:{ignoreScale:true}
+            }).sca(2.5).center().pos(170, 100).alp(0.2);
+
+            frame.on("keydown", function(e) {
+                // zog(e.keyCode);
+                if (e.keyCode == 82) { // R
+                    // zog("yay!")
+                    path.recordPoints(true);
+                }
+            });
+
+            doggoBoy.on("click", function() {
+                doggoBoy.centerReg().animate({
+                    props: {
+                        path: dogPath,
+                        orient: false
+                    },
+                    // drag:true,
+                    ease: "linear",
+                    time: 1000,
+                    loop: false,
+                    rewind: false,
+                });
             });
 
         var seriesMars = series(body, wheels, radar, scope);
@@ -310,7 +353,6 @@ frame.on("ready", function() {
                 time:1000
             })
             .top();
-
 
         parts.on("pressup", function(){
             var count = 0;
@@ -336,12 +378,6 @@ frame.on("ready", function() {
                     wait: 500,
                     time: 2000,
                 });
-                // planetMars.animate({
-                //     props: {y: 150 + stageH},
-                //     wait: 400,
-                //     time: 2000,
-                //     call: stageRover
-                // });
             }
         })
     }
