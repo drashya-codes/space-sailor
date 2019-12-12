@@ -18,7 +18,7 @@ var width = 1280;
 var height = 720;
 var color = dark;
 var outerColor = dark;
-var assets = ["Rockets.png", "Orbiter.png", "Tank.png", "baseTank.png", "earth.png", "mars.png", "coolingPod.png"];
+var assets = ["Rockets.png", "Orbiter.png", "Tank.png", "baseTank.png", "earth.png", "mars.png", "mercury.png", "coolingPod.png", "body.png", "wheels.png", "radar.png", "scope.png"];
 var path = "assets/";
 
 var frame = new Frame(scaling, width, height, color, outerColor, assets, path);
@@ -141,13 +141,13 @@ frame.on("ready", function() {
     function stageMars(){
         instructions.text = "We are on Mercury. It's hot here."
 
-        var backdropMars = new Rectangle(stageW, stageH).linearGradient(["#3f296a", "#040313"], [0,1], 1,1, stageW, 0).addTo().bot();
+        var backdropMercury = new Rectangle(stageW, stageH).linearGradient(["#bc1717", "#040313"], [0,1], 1,1, stageW, 0).addTo();
 
-        var starsContainerMars = new Container(stageW*1.3, stageH*1.3).center();
+        var starsContainerMercury = new Container(stageW*1.3, stageH*1.3).center();
             
-        var starsMars = new Circle(18, white).centerReg();
+        var starsMercury = new Circle(18, white).centerReg();
         
-        var planetMars = frame.asset("mars.png").sca(0.7)
+        var planetMercury = frame.asset("mercury.png").sca(0.1)
             .center()
             .top()
             .pos(0,300,CENTER,TOP);
@@ -159,22 +159,22 @@ frame.on("ready", function() {
         //     .linearGradient([red, orange], [1,0], 0,0, stageW,0);
         
         loop(60, function(){
-            starsMars
+            starsMercury
             .clone()
             .sca(rand(0.1, 0.2, 0.5))
             .alp(0.5)
-            .loc(rand(starsContainerMars.width), rand(starsContainerMars.height), starsContainerMars);
+            .loc(rand(starsContainerMercury.width), rand(starsContainerMercury.height), starsContainerMercury);
             
-            if(starsMars.hitTestCircle(starsMars, 15)){
-                starsMars.removeFrom();
+            if(starsMercury.hitTestCircle(starsMercury, 15)){
+                starsMercury.removeFrom();
             }
         });
     
-        new Scroller(starsContainerMars);
+        new Scroller(starsContainerMercury);
 
         var coolingPod = frame.asset("coolingPod.png").sca(0.3).alp(0).drag();
         var coolingPodClone = coolingPod.clone().drag()
-        var seriesMars = series(coolingPod, coolingPodClone);
+        var seriesMercury = series(coolingPod, coolingPodClone);
 
         var smokeParticle = new Circle(80, grey);
         var smoke = new Emitter({
@@ -198,7 +198,7 @@ frame.on("ready", function() {
             });
         
         function coolingPodEnter(){
-            var parts = new Tile(seriesMars, 2, 1, 20)
+            var parts = new Tile(seriesMercury, 2, 1, 20)
                 .center()
                 .mov(0,250)
                 .drag()
@@ -227,18 +227,66 @@ frame.on("ready", function() {
                         wait: 500,
                         time: 2000,
                     });
-                    planetMars.animate({
+                    planetMercury.animate({
                         props: {y: 150 + stageH},
                         wait: 400,
                         time: 2000,
-                        call: stageMars,
+                        call: stageRover
                     });
                 }
             });
         }
     }
 
-    function stage(){
+    function stageRover(){
+        instructions.text = "We are on Mars. Doggo is almost home!"
+
+        var backdropMars = new Rectangle(stageW, stageH).linearGradient(["#3f296a", "#040313"], [0,1], 1,1, stageW, 0).addTo();
+
+        var starsContainerMars = new Container(stageW*1.3, stageH*1.3).center();
+            
+        var starsMars = new Circle(18, white).centerReg();
+        
+        var planetMars = frame.asset("mars.png").sca(0.7)
+            .center()
+            .top()
+            .pos(0,300,CENTER,TOP);
+                
+        loop(60, function(){
+            starsMars
+            .clone()
+            .sca(rand(0.1, 0.2, 0.5))
+            .alp(0.5)
+            .loc(rand(starsContainerMars.width), rand(starsContainerMars.height), starsContainerMars);
+            
+            if(starsMars.hitTestCircle(starsMars, 15)){
+                starsMars.removeFrom();
+            }
+        });
+    
+        new Scroller(starsContainerMars);
+
+        var roverContainer = new Container(stageW, stageH).addTo();
+
+        var body = frame.asset("body.png").drag().alp(0);
+        var wheels = frame.asset("wheels.png").drag().alp(0);
+        var radar = frame.asset("radar.png").drag().alp(0);
+        var scope = frame.asset("scope.png").drag().alp(0);
+
+        var seriesMars = series(body, wheels, radar, scope);
+
+        var parts = new Tile(seriesMars, 4, 1, 20)
+            .center(roverContainer)
+            .mov(0,250)
+            .drag()
+            .animate({
+                wait:500,
+                props:{alpha:1},
+                sequence:500,
+                time:1000
+            })
+            .top();
+
 
     }
 
