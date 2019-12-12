@@ -1,0 +1,249 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Space Sailor</title>
+
+<style>
+    @import url('https://fonts.googleapis.com/css?family=Bubblegum+Sans&display=swap');
+</style> 
+
+<script src="https://zimjs.org/cdn/1.2.3/createjs_min.js"></script>
+<script src="https://zimjs.org/cdn/10.7.0/zim.js"></script>
+
+<script>
+
+var scaling = "fit"; // this will resize to fit inside the screen dimensions
+var width = 1280;
+var height = 720;
+var color = dark;
+var outerColor = dark;
+var assets = ["Rockets.png", "Orbiter.png", "Tank.png", "baseTank.png", "earth.png", "mars.png", "coolingPod.png"];
+var path = "assets/";
+
+var frame = new Frame(scaling, width, height, color, outerColor, assets, path);
+frame.on("ready", function() {
+    zog("ready from ZIM Frame"); // logs in console (F12 - choose console)
+
+    var stage = frame.stage;
+    var stageW = frame.width;
+    var stageH = frame.height;
+    var backdrop = new Rectangle(stageW, stageH).linearGradient(["#056da4", "#011339"], [0,1], 1,1, stageW, 0).addTo().bot();
+
+    var starsContainer = new Container(stageW*1.3, stageH*1.3).center();
+        
+    var stars = new Circle(18, yellow).centerReg();
+    
+    var planet = frame.asset("earth.png").sca(1)
+        .center()
+        .top()
+        .pos(0,150,CENTER,TOP);
+    
+    // var planet = new Circle (stageW, grey)
+    //     .center()
+    //     .top()
+    //     .pos(0,550,CENTER,TOP)
+    //     .linearGradient([red, orange], [1,0], 0,0, stageW,0);
+    
+    loop(60, function(){
+        stars
+        .clone()
+        .sca(rand(0.1, 0.2, 0.5))
+        .alp(0.5)
+        .loc(rand(starsContainer.width), rand(starsContainer.height), starsContainer);
+        
+        if(stars.hitTestCircle(stars, 15)){
+            stars.removeFrom();
+        }
+    });
+    
+    new Scroller(starsContainer);
+
+    var instructions = new Label({
+        text:"Try making a spaceship and help it fly",
+        font: "Bubblegum Sans",
+        color:white,
+        // backgroundColor:dark,
+        paddingHorizontal:100,
+        size:56,
+        align:"center"
+    }).centerReg().alp(.9).pos(0,30,CENTER);
+
+    var spaceship;
+    var hitRectangle;
+
+    makeSpaceShip();
+    function makeSpaceShip() {
+
+        spaceship = new Container(stageW, stageH);
+        // var rocketContainer = new Container().drag({all:true});
+
+        var orbiter = frame.asset("Orbiter.png").sca(0.3).drag().alp(0);
+        var rockets = frame.asset("Rockets.png").sca(0.3).drag().alp(0);
+        var tank = frame.asset("Tank.png").sca(0.3).drag().alp(0);
+        // var rockets = frame.asset("Rockets.png").sca(0.3).drag().centerReg(rocketContainer);
+
+        var baseTank = frame.asset("baseTank.png").sca(1).centerReg().alp(0.5);
+        hitRectangle = new Rectangle(200, 50).alp(1).centerReg();
+        // var hitCircleInRocket = new Circle().alp(1).centerReg(rocketContainer);
+
+        spaceship.centerReg();
+
+        var s = series(orbiter, tank, rockets);
+
+        var parts = new Tile(s, 3, 1, 30)
+            .centerReg(spaceship)
+            .mov(0,250)
+            .drag()
+            .animate({
+                wait:500,
+                props:{alpha:1},
+                sequence:250,
+                time:200
+            });
+        
+        
+        parts.on("pressup", function(){
+            var count = 0;
+            parts.loop(function (part) {
+                if (part.hitTestRect(hitRectangle, 6)) {
+                    count++;
+                    zog(count);
+                    baseTank.animate({
+                        props:{alpha:0}
+                    });
+                }
+            })
+
+            zog(parts.getChildIndex(orbiter))
+
+            if(count == parts.numChildren && parts.getChildIndex(orbiter)==2){
+                zog("Done");
+                spaceship.mouseChildren = false;
+                spaceship.animate({
+                    props: {y:  150 - stageH},
+                    wait: 500,
+                    // ease: "linear",
+                    time: 2000,
+                });
+                planet.animate({
+                    props: {y: 150 + stageH},
+                    wait: 400,
+                    time: 2000,
+                    call: stageMars,
+                });
+            }
+        });
+
+        stage.update();
+    } // end function makeSpaceShip
+
+    function stageMars(){
+        instructions.text = "We are on Mercury. It's hot here."
+
+        var backdropMars = new Rectangle(stageW, stageH).linearGradient(["#3f296a", "#040313"], [0,1], 1,1, stageW, 0).addTo().bot();
+
+        var starsContainerMars = new Container(stageW*1.3, stageH*1.3).center();
+            
+        var starsMars = new Circle(18, white).centerReg();
+        
+        var planetMars = frame.asset("mars.png").sca(0.7)
+            .center()
+            .top()
+            .pos(0,300,CENTER,TOP);
+        
+        // var planet = new Circle (stageW, grey)
+        //     .center()
+        //     .top()
+        //     .pos(0,550,CENTER,TOP)
+        //     .linearGradient([red, orange], [1,0], 0,0, stageW,0);
+        
+        loop(60, function(){
+            starsMars
+            .clone()
+            .sca(rand(0.1, 0.2, 0.5))
+            .alp(0.5)
+            .loc(rand(starsContainerMars.width), rand(starsContainerMars.height), starsContainerMars);
+            
+            if(starsMars.hitTestCircle(starsMars, 15)){
+                starsMars.removeFrom();
+            }
+        });
+    
+        new Scroller(starsContainerMars);
+
+
+
+        spaceship
+            // .sca(0.8)
+            .top()
+            .animate({
+                props:{y: 350},
+                ease:"linear",
+                time: 2000,
+                call: coolingPodEnter
+            });
+        
+        var coolingPod = frame.asset("coolingPod.png").sca(0.3).center(spaceship).alp(0).drag();
+
+        var seriesMars = series(coolingPod);
+        var parts = new Tile(seriesMars, 2, 1, 20);
+
+        function coolingPodEnter(){
+            parts
+                .center(spaceship)
+                .mov(0,250)
+                .drag()
+                .animate({
+                    wait:500,
+                    props:{alpha:1},
+                    sequence:250,
+                    time:2000
+                });
+        }
+
+
+        parts.on("pressup", function(){
+            var count = 0;
+            parts.loop(function (part) {
+                if (part.hitTestReg(hitRectangle, 6)) {
+                    count++;
+                    zog(count);
+                }
+            })
+
+            if(count == parts.numChildren){
+                zog("Done");
+                spaceship.mouseChildren = false;
+                spaceship.animate({
+                    props: {y:  150 - stageH},
+                    wait: 500,
+                    time: 2000,
+                });
+                planet.animate({
+                    props: {y: 150 + stageH},
+                    wait: 400,
+                    time: 2000,
+                    call: stageMars,
+                });
+            }
+        });
+        
+
+    }
+
+
+    stage.update();
+
+}); // end of ready
+
+</script>
+
+<meta name="viewport" content="width=device-width, user-scalable=no" />
+
+</head>
+
+<body>
+<!-- canvas with id="myCanvas" is made by zim Frame -->
+</body>
+</html>

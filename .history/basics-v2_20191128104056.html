@@ -1,0 +1,235 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Space Sailor</title>
+
+<script src="https://zimjs.org/cdn/1.2.3/createjs_min.js"></script>
+<script src="https://zimjs.org/cdn/10.6.1/zim.js"></script>
+
+<script>
+
+var scaling = "fit"; // this will resize to fit inside the screen dimensions
+var width = 1280;
+var height = 720;
+var color = dark;
+var outerColor = dark;
+var assets = ["Rockets.png", "Orbiter.png", "Tank.png"];
+var path = "assets/";
+
+var frame = new Frame(scaling, width, height, color, outerColor, assets, path);
+frame.on("ready", function() {
+    zog("ready from ZIM Frame"); // logs in console (F12 - choose console)
+
+    var stage = frame.stage;
+    var stageW = frame.width;
+    var stageH = frame.height;
+
+    var starsContainer = new Container(stageW*1.3, stageH*1.3).center();
+        
+    var stars = new Circle(18, yellow).centerReg();
+    
+    var planet = new Circle (stageW, grey)
+        .center()
+        .top()
+        .pos(0,550,CENTER,TOP)
+        .linearGradient([red, orange], [1,0], 0,0, stageW,0);
+    
+    loop(60, function(){
+        stars
+        .clone()
+        .sca(rand(0.1, 0.2, 0.5))
+        .alp(0.5)
+        .loc(rand(starsContainer.width), rand(starsContainer.height), starsContainer);
+        
+        if(stars.hitTestCircle(stars, 15)){
+            stars.removeFrom();
+        }
+    });
+    
+    new Scroller(starsContainer);
+
+    var instructions = new Label({
+        text:"Try making a spaceship and help it fly",
+        color:white,
+        backgroundColor:dark,
+        paddingHorizontal:100,
+        size:30,
+        align:"center"
+    }).centerReg().alp(.8).pos(0,30,CENTER);
+
+    var spaceship;
+    makeSpaceShip();
+    function makeSpaceShip() {
+
+        spaceship = new Container().centerReg();
+        spaceship.centerReg();
+
+        var orbiter = frame.asset("Orbiter.png").sca(1).center(spaceship);
+        //.drag();
+        //.center(spaceship);
+        var tank = frame.asset("Tank.png").sca(1).center(spaceship);
+        //.center(spaceship);
+        var rockets = frame.asset("Rockets.png").sca(1);
+        //.drag();
+
+        var tankOutline = tank.clone().center().alp(0.1);
+        var orbiterOutline = orbiter.clone().center().alp(0.1);
+        var rocketsOutline = rockets.clone().center().alp(0.1);
+
+        var s = series(orbiter, tank, rockets);
+
+        var parts = new Tile(s, 3, 1, 30)
+            .center(spaceship)
+            .mov(-100,0)
+            .drag()
+            .animate({
+                from:true,
+                wait:500,
+                props:{alpha:0},
+                sequence:250,
+                time:200
+            });
+        
+        // var a = [1,2,3];
+        // a.loop(function (element) {
+        // 
+        // })
+        
+        // loop(a, function (element) {
+            
+        // })
+        
+        parts.on("pressup", function(){
+            var count = 0;
+            parts.loop(function (part) {
+                if (part.hitTestBounds(tank)) {
+                    // zog("hitting");
+                    count++;
+                }
+            })
+            if (count == parts.numChildren) {
+                zog("done");
+            }
+
+            if(count == parts.numChildren){
+                spaceship.mouseChildren = false;
+
+                spaceship.animate({
+                    props: {y:  150 - stageH},
+                    wait: 500,
+                    time: 2000,
+                });
+            }
+        });
+
+        // makePath();
+        stage.update();
+    } // end function makeSkunk
+
+
+    // PART 2 - MAKING THE PATH
+    // You can comment out PART 1 if you want
+    // and work on PART 2 by uncommenting the makePath() below
+    // makePath needs a skunk to work
+    // but you can just set skunk to a new Circle(80)
+    // If you got your skunk to work - then no problem!
+
+    // makePath();
+    function makePath() {
+        zog("makePath");
+        // 9. Change the text of the instructions to "follow path"
+
+        zog(skunk)
+
+        // 10. Create a Squiggle and store it in a variable called path
+        // make it dark with a thickness of 70 and set interactive to false
+        // Use the following points for your Squiggle:
+        // points: [[241.8,-193.6,0,0,-152.9,-5.7,152.9,5.7],[423.6,-53.5,0,0,90,-102.8,-90,102.8],[522.7,84,0,0,-60.3,-58.5,60.3,58.5],[225.3,324.8,0,0,251.2,31.1,-251.2,-31.1],[-52.1,196.2,0,0,162.7,-53,-162.7,53],[-215,-23.9,0,0,-35.5,105.1,35.5,-105.1],[47.4,-195.9,0,0,-122.1,-0.4,122.1,0.4]]
+        // center it on the stage and set the alpha to .1
+
+
+
+        // 11. Scale the skunk to .3 and rotate it -90 to face along the path
+        // set it to the top layer on the stage
+        // and animate it along the path using the props path property ;-)
+        // Set drag to true and an ease of linear
+
+
+
+        // 12. Add a mousedown event to the skunk
+        // so it calls makeGrass when pressed
+        // this event should only happen once
+        // so set the fourth parameter of the on() method to true
+        // this will make the event only happen once
+
+
+
+        stage.update();
+    }
+
+    // PART 3 - MAKING THE GRASS
+    // It is difficult to make this section without a path
+    // but you can get part marks if you need to
+
+    function makeGrass() {
+
+        // 13. Make a Pen and store it in a variable called pen
+        // set the color randomly to green or "green" using a ZIM VEE (Pick) value
+        // set the penType to grass
+        // and set the spread to a min of 20 to a max of 80 using a ZIM VEE value
+        // locate the pen at the skunk
+        // and set it back one layer with ord()
+
+
+
+        // 14. Add a function to the Ticker
+        // have the function locate the pen at the skunk
+
+
+
+        // 15. With a timeout, call a function after 10000 ms
+        // in the function, create a Button with a label of "FREE ME!"
+        // make it 250x120 with backgroundColor of black
+        // and a rollBackgroundColor of dark
+        // The color should be white
+        // Center it on the stage
+        // and animate its alpha from 0 to 1 in default time
+
+
+
+            // 15b. chain a tap() to the button
+            // that calls a function
+            // and in that function
+            // remove the button
+            // set the instructions to "you are free"
+            // stop animation on the skunk
+            // set the skunk to drag and a rotation of -45
+
+
+
+        // 16. You are done!!
+        // ZIP all your files except the video
+        // Call your ZIP file your name
+        // Raise your hand and we will turn you back on
+        // and have you upload the file to SLATE
+
+        // Please exit quietly
+        // Do not wait in the halls outside due to noise
+
+        stage.update();
+    }
+
+
+}); // end of ready
+
+</script>
+
+<meta name="viewport" content="width=device-width, user-scalable=no" />
+
+</head>
+
+<body>
+<!-- canvas with id="myCanvas" is made by zim Frame -->
+</body>
+</html>
