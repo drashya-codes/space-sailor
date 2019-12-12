@@ -19,7 +19,7 @@ var height = 720;
 var color = dark;
 var outerColor = dark;
 var assets = ["Rockets.png", "Orbiter.png", "Tank.png", "baseTank.png", "earth.png", "mars.png", "mercury.png", "coolingPod.png", "body.png", "wheels.png", "radar.png", "scope.png"];
-var path = "assets/";
+var path = "Final-assets/";
 
 var frame = new Frame(scaling, width, height, color, outerColor, assets, path);
 frame.on("ready", function() {
@@ -38,12 +38,6 @@ frame.on("ready", function() {
         .center()
         .top()
         .pos(0,150,CENTER,TOP);
-    
-    // var planet = new Circle (stageW, grey)
-    //     .center()
-    //     .top()
-    //     .pos(0,550,CENTER,TOP)
-    //     .linearGradient([red, orange], [1,0], 0,0, stageW,0);
     
     loop(60, function(){
         stars
@@ -71,6 +65,12 @@ frame.on("ready", function() {
 
     var spaceship;
     var hitRectangle;
+    var smokeParticle = new Circle(80, grey);
+    var smoke = new Emitter({
+        obj:smokeParticle,
+        life: 500,
+        force: 4
+    });
 
     makeSpaceShip();
     function makeSpaceShip() {
@@ -78,14 +78,14 @@ frame.on("ready", function() {
         spaceship = new Container(stageW, stageH);
         // var rocketContainer = new Container().drag({all:true});
 
-        var orbiter = frame.asset("Orbiter.png").sca(0.3).drag().alp(0);
-        var rockets = frame.asset("Rockets.png").sca(0.3).drag().alp(0);
-        var tank = frame.asset("Tank.png").sca(0.3).drag().alp(0);
-        // var rockets = frame.asset("Rockets.png").sca(0.3).drag().centerReg(rocketContainer);
+        var orbiter = frame.asset("Orbiter.png").sca(0.25).drag().alp(0);
+        var rockets = frame.asset("Rockets.png").sca(0.25).drag().alp(0);
+        var tank = frame.asset("Tank.png").sca(0.25).drag().alp(0);
 
-        var baseTank = frame.asset("baseTank.png").sca(1).centerReg().alp(0.5);
-        hitRectangle = new Rectangle(200, 50).alp(1).centerReg();
-        // var hitCircleInRocket = new Circle().alp(1).centerReg(rocketContainer);
+        var baseTank = frame.asset("baseTank.png").sca(0.25).centerReg().alp(0.2);
+        hitRectangle = new Rectangle(200, 50).alp(0).centerReg();
+        // hitRectangle.x = 700;
+        // hitRectangle.y = 200;
 
         spaceship.centerReg();
 
@@ -93,7 +93,7 @@ frame.on("ready", function() {
 
         var parts = new Tile(s, 3, 1, 30)
             .centerReg(spaceship)
-            .mov(0,250)
+            .pos(650,400)
             .drag()
             .animate({
                 wait:500,
@@ -102,16 +102,17 @@ frame.on("ready", function() {
                 time:200
             });
         
-        
         parts.on("pressup", function(){
             var count = 0;
             parts.loop(function (part) {
                 if (part.hitTestRect(hitRectangle, 6)) {
                     count++;
                     zog(count);
-                    baseTank.animate({
-                        props:{alpha:0}
-                    });
+                    // baseTank.animate({
+                    //     props:{alpha:0},
+                        // hitRectangle.x: point.x,
+                        // y:point.y,
+                        // time: 100,
                 }
             })
 
@@ -120,12 +121,15 @@ frame.on("ready", function() {
             if(count == parts.numChildren && parts.getChildIndex(orbiter)==2){
                 zog("Done");
                 spaceship.mouseChildren = false;
+                baseTank.animate({
+                    props:{alpha:0},});
                 spaceship.animate({
                     props: {y:  150 - stageH},
                     wait: 500,
                     // ease: "linear",
                     time: 2000,
                 });
+                smoke.centerReg(spaceship).mov(0,200).ord(-1);
                 planet.animate({
                     props: {y: 150 + stageH},
                     wait: 400,
@@ -139,7 +143,15 @@ frame.on("ready", function() {
     } // end function makeSpaceShip
 
     function stageMars(){
-        instructions.text = "We are on Mercury. It's hot here."
+
+        instructions = new Label({
+            text:"We are Mercury and it's really hot here.",
+            font: "Bubblegum Sans",
+            color:white,
+            paddingHorizontal:100,
+            size:56,
+            align:"center"
+        }).centerReg().alp(.9).pos(0,30,CENTER);
 
         var backdropMercury = new Rectangle(stageW, stageH).linearGradient(["#bc1717", "#040313"], [0,1], 1,1, stageW, 0).addTo();
 
@@ -151,12 +163,6 @@ frame.on("ready", function() {
             .center()
             .top()
             .pos(0,300,CENTER,TOP);
-        
-        // var planet = new Circle (stageW, grey)
-        //     .center()
-        //     .top()
-        //     .pos(0,550,CENTER,TOP)
-        //     .linearGradient([red, orange], [1,0], 0,0, stageW,0);
         
         loop(60, function(){
             starsMercury
@@ -172,17 +178,11 @@ frame.on("ready", function() {
     
         new Scroller(starsContainerMercury);
 
-        var coolingPod = frame.asset("coolingPod.png").sca(0.3).alp(0).drag();
-        var coolingPodClone = coolingPod.clone().drag()
+        var coolingPod = frame.asset("coolingPod.png").sca(0.2).alp(0).drag();
+        var coolingPodClone = coolingPod.clone().drag();
         var seriesMercury = series(coolingPod, coolingPodClone);
 
-        var smokeParticle = new Circle(80, grey);
-        var smoke = new Emitter({
-            obj:smokeParticle,
-            life: 500,
-            force: 3
-        }).centerReg(spaceship).mov(0,200).ord(-1)
-
+        smoke.centerReg(spaceship).mov(0,200).ord(-1);
 
         spaceship
             // .sca(0.8)
@@ -190,12 +190,12 @@ frame.on("ready", function() {
             .animate({
                 props:{y: 350},
                 ease:"linear",
-                time: 2000,
+                time: 3000,
                 call: function(){
                     coolingPodEnter();
                     smoke.removeFrom(spaceship)
                 }
-            });
+            }).sca(0.5);
         
         function coolingPodEnter(){
             var parts = new Tile(seriesMercury, 2, 1, 20)
@@ -227,6 +227,7 @@ frame.on("ready", function() {
                         wait: 500,
                         time: 2000,
                     });
+                    smoke.centerReg(spaceship).mov(0,200).ord(-1);
                     planetMercury.animate({
                         props: {y: 150 + stageH},
                         wait: 400,
