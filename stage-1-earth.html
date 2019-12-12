@@ -70,55 +70,62 @@ frame.on("ready", function() {
     }).centerReg().alp(.9).pos(0,30,CENTER);
 
     var spaceship;
+    var hitRectangle;
+    var smoke;
 
     makeSpaceShip();
     function makeSpaceShip() {
 
-        spaceship = new Container();
+        spaceship = new Container(stageW, stageH);
+        // var rocketContainer = new Container().drag({all:true});
 
-        var orbiter = frame.asset("Orbiter.png").sca(0.3).drag().center(spaceship);
-        var baseTank = frame.asset("baseTank.png").sca(1).center(spaceship).alp(0.5);
-        // baseTank.x = baseTank.startX = stageW;
-        // baseTank.y = baseTank.startY = stageH;
-        var rockets = frame.asset("Rockets.png").sca(0.3).drag();
-        var tank = frame.asset("Tank.png").sca(0.3).drag();
+        var orbiter = frame.asset("Orbiter.png").sca(0.3).drag().alp(0);
+        var rockets = frame.asset("Rockets.png").sca(0.3).drag().alp(0);
+        var tank = frame.asset("Tank.png").sca(0.3).drag().alp(0);
+        // var rockets = frame.asset("Rockets.png").sca(0.3).drag().centerReg(rocketContainer);
+
+        var baseTank = frame.asset("baseTank.png").sca(1).centerReg().alp(0.5);
+        hitRectangle = new Rectangle(200, 50).alp(1).centerReg();
+        // var hitCircleInRocket = new Circle().alp(1).centerReg(rocketContainer);
 
         spaceship.centerReg();
 
         var s = series(orbiter, tank, rockets);
 
         var parts = new Tile(s, 3, 1, 30)
-            .center(spaceship)
+            .centerReg(spaceship)
             .mov(0,250)
             .drag()
             .animate({
-                from:true,
                 wait:500,
-                props:{alpha:0},
+                props:{alpha:1},
                 sequence:250,
                 time:200
+            });
+        
+        var smokeParticle = new Circle(80, grey);
+            smoke = new Emitter({
+                obj:smokeParticle,
+                life: 500,
+                force: 3
             });
         
         parts.on("pressup", function(){
             var count = 0;
             parts.loop(function (part) {
-                if (part.hitTestBounds(baseTank)) {
-                    // zog("hitting");
-                    // zog(part.id);
-                    // zog(count);
+                if (part.hitTestRect(hitRectangle, 6)) {
                     count++;
-                    // tank.x = baseTank.x;
-                    // zog(tank.x);
+                    zog(count);
                     baseTank.animate({
-                        props:{alpha:0.1}
+                        props:{alpha:0}
                     });
                 }
             })
 
-            if(count == parts.numChildren){
+            zog(parts.getChildIndex(orbiter))
+
+            if(count == parts.numChildren && parts.getChildIndex(orbiter)==2){
                 zog("Done");
-                // zog(count);
-                // zog(parts.numChildren);
                 spaceship.mouseChildren = false;
                 spaceship.animate({
                     props: {y:  150 - stageH},
@@ -126,20 +133,19 @@ frame.on("ready", function() {
                     // ease: "linear",
                     time: 2000,
                 });
+                smoke.centerReg(spaceship).mov(0,200).ord(-1);
                 planet.animate({
                     props: {y: 150 + stageH},
                     wait: 400,
                     time: 2000,
                     call: stageMars,
                 });
-                // stageMars();
             }
         });
 
         stage.update();
     } // end function makeSpaceShip
 
-    // stageMars();
     function stageMars(){
         instructions.text = "We are on Mercury. It's hot here."
 
@@ -174,43 +180,71 @@ frame.on("ready", function() {
     
         new Scroller(starsContainerMars);
 
+        var coolingPod = frame.asset("coolingPod.png").sca(0.3).alp(0).drag();
+        var coolingPodClone = coolingPod.clone().drag()
+        var seriesMars = series(coolingPod, coolingPodClone);
 
         spaceship
-            .sca(0.6)
-            .rot(-180)
+            // .sca(0.8)
             .top()
             .animate({
-                props:{y: 400},
+                props:{y: 350},
                 ease:"linear",
                 time: 2000,
-            });
-        
-        var coolingPod = frame.asset("coolingPod.png").sca(0.5);
-
-        var seriesMars = series(coolingPod);
-
-        var parts = new Tile(seriesMars, 2, 1, 20)
-            .center(spaceship)
-            .mov(0,250)
-            .drag()
-            .animate({
-                from:true,
-                wait:500,
-                props:{alpha:0},
-                sequence:250,
-                time:2000
+                call: function(){
+                    coolingPodEnter();
+                    smoke.removeFrom(stageMars);
+                }
             });
 
-        var marsSpaceship = spaceship
-        .clone().addTo(backdropMars)
-        .rot(-90)
-        .top();
-        // .addTo(starsContainerMars)
+            smoke = new Emitter({
+                obj:smokeParticle,
+                life: 500,
+                force: 3
+            });
         
-        
-        // marsSpaceship.animate({
-        //     ease:"linear"
-        // });
+        function coolingPodEnter(){
+            var parts = new Tile(seriesMars, 2, 1, 20)
+                .center()
+                .mov(0,250)
+                .drag()
+                .animate({
+                    wait:500,
+                    props:{alpha:1},
+                    sequence:500,
+                    time:1000
+                });
+
+
+            parts.on("pressup", function(){
+                var count = 0;
+                parts.loop(function (part) {
+                    if (part.hitTestRect(hitRectangle, 6)) {
+                        count++;
+                        zog(count);
+                    }
+                })
+
+                if(count == parts.numChildren){
+                    zog("Done");
+                    parts.addTo(spaceship);
+                    spaceship.animate({
+                        props: {y:  150 - stageH},
+                        wait: 500,
+                        time: 2000,
+                    });
+                    planetMars.animate({
+                        props: {y: 150 + stageH},
+                        wait: 400,
+                        time: 2000,
+                        call: stageMars,
+                    });
+                }
+            });
+        }
+    }
+
+    function stage(){
 
     }
 
