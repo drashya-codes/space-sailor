@@ -84,7 +84,7 @@ frame.on("ready", function() {
         // var rockets = frame.asset("Rockets.png").sca(0.3).drag().centerReg(rocketContainer);
 
         var baseTank = frame.asset("baseTank.png").sca(1).centerReg().alp(0.5);
-        hitRectangle = new Rectangle(200, 50).alp(1).centerReg();
+        hitRectangle = new Rectangle(200, 50).alp(0).centerReg();
         // var hitCircleInRocket = new Circle().alp(1).centerReg(rocketContainer);
 
         spaceship.centerReg();
@@ -221,13 +221,13 @@ frame.on("ready", function() {
 
                 if(count == parts.numChildren){
                     zog("Done");
-                    parts.addTo(spaceship);
+                    spaceship.mouseChildren = false;
                     spaceship.animate({
                         props: {y:  150 - stageH},
                         wait: 500,
                         time: 2000,
                     });
-                    planetMars.animate({
+                    planet.animate({
                         props: {y: 150 + stageH},
                         wait: 400,
                         time: 2000,
@@ -236,10 +236,6 @@ frame.on("ready", function() {
                 }
             });
         }
-    }
-
-    function stage(){
-
     }
 
 
