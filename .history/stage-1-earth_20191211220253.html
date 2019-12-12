@@ -78,7 +78,7 @@ frame.on("ready", function() {
         // var rocketContainer = new Container().drag({all:true});
 
         var orbiter = frame.asset("Orbiter.png").sca(0.3).drag();
-        var rockets = frame.asset("Rockets.png").sca(0.3).drag();
+        var rockets = frame.asset("Rockets.png").sca(0.3).drag().centerReg(rocketContainer);
         var tank = frame.asset("Tank.png").sca(0.3).drag().outline();
         // var rockets = frame.asset("Rockets.png").sca(0.3).drag().centerReg(rocketContainer);
 

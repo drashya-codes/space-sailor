@@ -75,16 +75,15 @@ frame.on("ready", function() {
     function makeSpaceShip() {
 
         spaceship = new Container();
-        // var rocketContainer = new Container().drag({all:true});
+        var rocketContainer = new Container().drag({all:true}).addTo().alp(0);
 
-        var orbiter = frame.asset("Orbiter.png").sca(0.3).drag();
-        var rockets = frame.asset("Rockets.png").sca(0.3).drag();
-        var tank = frame.asset("Tank.png").sca(0.3).drag().outline();
-        // var rockets = frame.asset("Rockets.png").sca(0.3).drag().centerReg(rocketContainer);
+        var orbiter = frame.asset("Orbiter.png").sca(0.3).drag().alp(0);
+        var rockets = frame.asset("Rockets.png").sca(0.3).drag().centerReg(rocketContainer);
+        var tank = frame.asset("Tank.png").sca(0.3).drag().outline().alp(0);
 
         var baseTank = frame.asset("baseTank.png").sca(1).centerReg(spaceship).alp(0.5);
         var hitCircle = new Circle().alp(1).centerReg(spaceship);
-        // var hitCircleInRocket = new Circle().alp(1).centerReg(rocketContainer);
+        var hitCircleInRocket = new Circle().alp(1).centerReg(rocketContainer);
 
         spaceship.centerReg();
 
@@ -95,9 +94,8 @@ frame.on("ready", function() {
             .mov(0,250)
             .drag()
             .animate({
-                from:true,
                 wait:500,
-                props:{alpha:0},
+                props:{alpha:1},
                 sequence:250,
                 time:200
             });
