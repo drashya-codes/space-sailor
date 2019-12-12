@@ -176,30 +176,20 @@ frame.on("ready", function() {
         var coolingPodClone = coolingPod.clone().drag()
         var seriesMars = series(coolingPod, coolingPodClone);
 
-        var smokeParticle = new Circle(80, grey);
-        var smoke = new Emitter({
-            obj:smokeParticle,
-            life: 500,
-            force: 3
-        }).centerReg(spaceship).mov(0,200).ord(-1)
-
-
         spaceship
             // .sca(0.8)
             .top()
+            .drag()
             .animate({
                 props:{y: 350},
                 ease:"linear",
                 time: 2000,
-                call: function(){
-                    coolingPodEnter();
-                    smoke.removeFrom(spaceship)
-                }
+                call: coolingPodEnter
             });
         
         function coolingPodEnter(){
             var parts = new Tile(seriesMars, 2, 1, 20)
-                .center()
+                .center(spaceship)
                 .mov(0,250)
                 .drag()
                 .animate({
@@ -213,7 +203,7 @@ frame.on("ready", function() {
             parts.on("pressup", function(){
                 var count = 0;
                 parts.loop(function (part) {
-                    if (part.hitTestRect(hitRectangle, 6)) {
+                    if (part.hitTestReg(hitRectangle, 6)) {
                         count++;
                         zog(count);
                     }

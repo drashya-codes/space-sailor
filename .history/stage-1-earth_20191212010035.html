@@ -181,7 +181,7 @@ frame.on("ready", function() {
             obj:smokeParticle,
             life: 500,
             force: 3
-        }).centerReg(spaceship).mov(0,200).ord(-1)
+        }).centerReg(spaceship)
 
 
         spaceship
@@ -191,10 +191,7 @@ frame.on("ready", function() {
                 props:{y: 350},
                 ease:"linear",
                 time: 2000,
-                call: function(){
-                    coolingPodEnter();
-                    smoke.removeFrom(spaceship)
-                }
+                call: smoke.removeFrom(spaceship), coolingPodEnter
             });
         
         function coolingPodEnter(){
