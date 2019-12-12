@@ -70,6 +70,12 @@ frame.on("ready", function() {
 
     var spaceship;
     var hitRectangle;
+    var smokeParticle = new Circle(80, grey);
+    var smoke = new Emitter({
+        obj:smokeParticle,
+        life: 500,
+        force: 4
+    });
 
     makeSpaceShip();
     function makeSpaceShip() {
@@ -77,12 +83,12 @@ frame.on("ready", function() {
         spaceship = new Container(stageW, stageH);
         // var rocketContainer = new Container().drag({all:true});
 
-        var orbiter = frame.asset("Orbiter.png").sca(0.3).drag().alp(0);
-        var rockets = frame.asset("Rockets.png").sca(0.3).drag().alp(0);
-        var tank = frame.asset("Tank.png").sca(0.3).drag().alp(0);
+        var orbiter = frame.asset("Orbiter.png").sca(0.25).drag().alp(0);
+        var rockets = frame.asset("Rockets.png").sca(0.25).drag().alp(0);
+        var tank = frame.asset("Tank.png").sca(0.25).drag().alp(0);
         // var rockets = frame.asset("Rockets.png").sca(0.3).drag().centerReg(rocketContainer);
 
-        var baseTank = frame.asset("baseTank.png").sca(0.3).centerReg().alp(0.5);
+        var baseTank = frame.asset("baseTank.png").sca(0.25).centerReg().alp(0.5);
         hitRectangle = new Rectangle(200, 50).alp(0).centerReg();
         // var hitCircleInRocket = new Circle().alp(1).centerReg(rocketContainer);
 
@@ -92,7 +98,7 @@ frame.on("ready", function() {
 
         var parts = new Tile(s, 3, 1, 30)
             .centerReg(spaceship)
-            .mov(0,250)
+            .pos(650,400)
             .drag()
             .animate({
                 wait:500,
@@ -122,9 +128,9 @@ frame.on("ready", function() {
                 spaceship.animate({
                     props: {y:  150 - stageH},
                     wait: 500,
-                    // ease: "linear",
                     time: 2000,
                 });
+                smoke.centerReg(spaceship).mov(0,200).ord(-1);
                 planet.animate({
                     props: {y: 150 + stageH},
                     wait: 400,
@@ -138,7 +144,14 @@ frame.on("ready", function() {
     } // end function makeSpaceShip
 
     function stageMars(){
-        instructions.text = "We are on Mercury. It's hot here."
+        instructions = new Label({
+            text:"We are Mercury and it's really hot here.",
+            font: "Bubblegum Sans",
+            color:white,
+            paddingHorizontal:100,
+            size:56,
+            align:"center"
+        }).centerReg().alp(.9).pos(0,30,CENTER);
 
         var backdropMercury = new Rectangle(stageW, stageH).linearGradient(["#bc1717", "#040313"], [0,1], 1,1, stageW, 0).addTo();
 
@@ -150,12 +163,6 @@ frame.on("ready", function() {
             .center()
             .top()
             .pos(0,300,CENTER,TOP);
-        
-        // var planet = new Circle (stageW, grey)
-        //     .center()
-        //     .top()
-        //     .pos(0,550,CENTER,TOP)
-        //     .linearGradient([red, orange], [1,0], 0,0, stageW,0);
         
         loop(60, function(){
             starsMercury
@@ -184,17 +191,16 @@ frame.on("ready", function() {
 
 
         spaceship
-            // .sca(0.8)
             .top()
             .animate({
                 props:{y: 350},
                 ease:"linear",
-                time: 2000,
+                time: 4000,
                 call: function(){
                     coolingPodEnter();
                     smoke.removeFrom(spaceship)
                 }
-            });
+            }).sca(0.6);
         
         function coolingPodEnter(){
             var parts = new Tile(seriesMercury, 2, 1, 20)
@@ -268,11 +274,11 @@ frame.on("ready", function() {
 
         var roverContainer = new Container(stageW, stageH).addTo();
 
-        var body = frame.asset("body.png").sca(0.8).drag().alp(0);
-        var wheels = frame.asset("wheels.png").sca(0.8).drag().alp(0);
-        var radar = frame.asset("radar.png").sca(0.8).drag().alp(0);
-        var scope = frame.asset("scope.png").sca(0.8).drag().alp(0);
-        var baseBody = frame.asset("baseBody.png").sca(0.8).alp(0.8).centerReg(roverContainer).mov(-250,50).rot(-20);
+        var body = frame.asset("body.png").sca(0.5).drag().alp(0);
+        var wheels = frame.asset("wheels.png").sca(0.5).drag().alp(0);
+        var radar = frame.asset("radar.png").sca(0.5).drag().alp(0);
+        var scope = frame.asset("scope.png").sca(0.5).drag().alp(0);
+        var baseBody = frame.asset("baseBody.png").sca(0.5).alp(0.8).centerReg(roverContainer).mov(-250,50).rot(-20);
         // hitRectangle = new Rectangle(200, 50).alp(1).centerReg();
         hitRectangle.rot(90);
         hitRectangle.width = 300;
@@ -283,7 +289,7 @@ frame.on("ready", function() {
             .animate({
                 props:{x:1000, y: 200},
                 ease:"linear",
-                time: 1000
+                time: 3500,
             })
             .wiggle({
                 baseAmount: 20,
