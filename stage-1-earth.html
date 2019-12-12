@@ -18,7 +18,7 @@ var width = 1280;
 var height = 720;
 var color = dark;
 var outerColor = dark;
-var assets = ["Rockets.png", "Orbiter.png", "Tank.png", "baseTank.png", "earth.png", "mars.png", "mercury.png", "coolingPod.png", "body.png", "wheels.png", "radar.png", "scope.png"];
+var assets = ["Rockets.png", "Orbiter.png", "Tank.png", "baseTank.png", "earth.png", "mars.png", "mercury.png", "coolingPod.png", "body.png", "wheels.png", "radar.png", "scope.png", "baseBody.png"];
 var path = "assets/";
 
 var frame = new Frame(scaling, width, height, color, outerColor, assets, path);
@@ -84,7 +84,7 @@ frame.on("ready", function() {
         // var rockets = frame.asset("Rockets.png").sca(0.3).drag().centerReg(rocketContainer);
 
         var baseTank = frame.asset("baseTank.png").sca(1).centerReg().alp(0.5);
-        hitRectangle = new Rectangle(200, 50).alp(1).centerReg();
+        hitRectangle = new Rectangle(200, 50).alp(0).centerReg();
         // var hitCircleInRocket = new Circle().alp(1).centerReg(rocketContainer);
 
         spaceship.centerReg();
@@ -115,7 +115,7 @@ frame.on("ready", function() {
                 }
             })
 
-            zog(parts.getChildIndex(orbiter))
+            // zog(parts.getChildIndex(orbiter));
 
             if(count == parts.numChildren && parts.getChildIndex(orbiter)==2){
                 zog("Done");
@@ -222,6 +222,7 @@ frame.on("ready", function() {
                 if(count == parts.numChildren){
                     zog("Done");
                     parts.addTo(spaceship);
+                    smoke.addTo(spaceship)
                     spaceship.animate({
                         props: {y:  150 - stageH},
                         wait: 500,
@@ -268,10 +269,28 @@ frame.on("ready", function() {
 
         var roverContainer = new Container(stageW, stageH).addTo();
 
-        var body = frame.asset("body.png").drag().alp(0);
-        var wheels = frame.asset("wheels.png").drag().alp(0);
-        var radar = frame.asset("radar.png").drag().alp(0);
-        var scope = frame.asset("scope.png").drag().alp(0);
+        var body = frame.asset("body.png").sca(0.8).drag().alp(0);
+        var wheels = frame.asset("wheels.png").sca(0.8).drag().alp(0);
+        var radar = frame.asset("radar.png").sca(0.8).drag().alp(0);
+        var scope = frame.asset("scope.png").sca(0.8).drag().alp(0);
+        var baseBody = frame.asset("baseBody.png").sca(0.8).alp(0.8).centerReg(roverContainer).mov(-250,50).rot(-20);
+        // hitRectangle = new Rectangle(200, 50).alp(1).centerReg();
+        hitRectangle.rot(90);
+        hitRectangle.width = 300;
+
+        spaceship            
+            .top()
+            .sca(0.5)
+            .animate({
+                props:{x:1000, y: 200},
+                ease:"linear",
+                time: 1000
+            })
+            .wiggle({
+                baseAmount: 20,
+                minAmount: 10,
+                maxAmount: 30
+            });
 
         var seriesMars = series(body, wheels, radar, scope);
 
@@ -288,6 +307,38 @@ frame.on("ready", function() {
             .top();
 
 
+        parts.on("pressup", function(){
+            var count = 0;
+            parts.loop(function (part) {
+                if (part.hitTestRect(hitRectangle, 6)) {
+                    count++;
+                    zog(count);
+                    baseBody.animate({
+                        props:{alpha:0}
+                    })
+                }
+            })
+        
+        zog(parts.getChildIndex(body))
+
+
+            if(count == parts.numChildren){
+                zog("Done");
+                zog(parts.numChildren);
+                parts.addTo(roverContainer);
+                roverContainer.animate({
+                    props: {x:  150 - stageW},
+                    wait: 500,
+                    time: 2000,
+                });
+                // planetMars.animate({
+                //     props: {y: 150 + stageH},
+                //     wait: 400,
+                //     time: 2000,
+                //     call: stageRover
+                // });
+            }
+        })
     }
 
 
