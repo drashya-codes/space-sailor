@@ -29,111 +29,226 @@ frame.on("ready", function() {
     var stageW = frame.width;
     var stageH = frame.height;
 
-    function makeIntro() {
-
-        var title = new Label({
-                    text: "SPACE SAILOR",
-                    size: 72,
-                    font: "Bubblegum Sans",
-                    color: white,
-                    // backgroundColor: red,
-                    // shiftVertical: 4
-                }).pos(30, 30).ske(10).animate({
-                    props: {
-                        alpha: .4
-                    },
-                    wait: 2000
-                });
-
-        var intro = new Container().addTo();
-
-                var backdrop = new Rectangle(stageW, stageH)
-                    .addTo(intro)
-                    .linearGradient(["#bc1717", "#040313"], [0, 1], 0, 0, 0, stageH);
-                title.clone().centerReg(intro).sca(2).pos(0, 100, CENTER, TOP, intro);
-
-                var label = new Label({
-                    text: "Build spaceship",
-                    font: "Bubblegum Sans",
-                    color: "white",
-                    size: 20,
-                    align: "center"
-                }).addTo(intro).centerReg();
-
-                //Play game button
-                new Button({
-                    label:label,
-                    width:260,
-                    height:120,
-                    backgroundColor:"black",
-                    rollBackgroundColor:"grey",
-                    borderWidth:8,
-                    borderColor:"grey",
-                    // gradient:.3,
-                    corner:12
-                    }).addTo(intro)
-                    .centerReg()
-                    .pos(0, 100, CENTER, BOTTOM)
-                    .wiggle("rotation", 1, 2, 6, 500, 1000)
-                    .tap(function() {
-                        intro
-                            .cache()
-                            .animate({
-                                y: -stageH
-                            }, 700);
-                        stage.update()
-                    });
-        }
-
-
 
     var backdrop = new Rectangle(stageW, stageH).linearGradient(["#056da4", "#011339"], [0,1], 1,1, stageW, 0).addTo().bot();
-
     var starsContainer = new Container(stageW*1.3, stageH*1.3).center();
-        
+
     var stars = new Circle(18, yellow).centerReg();
-    
+
     var planet = frame.asset("earth.png").sca(1)
         .center()
         .top()
         .pos(0,150,CENTER,TOP);
-    
+
+
     loop(60, function(){
         stars
         .clone()
         .sca(rand(0.1, 0.2, 0.5))
         .alp(0.5)
         .loc(rand(starsContainer.width), rand(starsContainer.height), starsContainer);
-        
+
         if(stars.hitTestCircle(stars, 15)){
             stars.removeFrom();
         }
     });
-    
-    new Scroller(starsContainer);
 
+    new Scroller(starsContainer);
     var instructions = new Label({
-        text:"Join the parts and help it fly",
+        text:"Try making a spaceship and help it fly",
         font: "Bubblegum Sans",
         color:white,
         paddingHorizontal:100,
-        size:72,
+        size:56,
         align:"center"
-    }).centerReg().alp(1).pos(0,30,CENTER);
-
+    }).centerReg().alp(.9).pos(0,30,CENTER);
     var spaceship;
     var hitRectangle;
 
-    var smokeParticle = new Circle(80, grey);
-    var smoke = new Emitter({
-        obj:smokeParticle,
-        life: 700,
-        force: 2,
+    var dog = frame.asset("doggoBoy.png");
+    var bubbleImg = frame.asset("bubble.png").sca(0.32);
+    var bubble = new Container().addTo();
+    var bubbleText = new Label({
+        text:"",
+        font: "Bubblegum Sans",
+        labelWidth: 200
+    }).loc(100,40, bubble);
+
+    //RUN INTRO FUNCTION
+    intro();
+
+    function intro(){
+    //ASSETS/COMPONENTS FOR INTRO
+    var bubbleIntroImg = frame.asset("bubbleIntro.png")
+    .sca(0.7)
+    .loc(800,-100,bubble)
+    .alp(0);
+    var bubbleIntroText = new Label({
+        text:"",
+        font: "Bubblegum Sans",
+        labelWidth: 400
+    }).loc(430,250,bubble);
+    var acceptBtn = new Button({
+        width: 150,
+        height: 80,
+        label: "Yes!",
+        backgroundColor: "#056da4",
+        rollBackgroundColor: "#011339"
     });
+
+    //SET NEXT STAGE COMPONENTS TO ALPHA 0
+        instructions.alpha = 0;
+        planet.alpha = 0;
+
+    //TEXT FOR INTRO
+    timeout(1000, function(){
+        dog.loc(10,500)
+        .animate({
+            props: {y:800, x:-100},
+            from: true,
+            ease: "backOut"
+        });
+        bubbleIntroImg.animate({
+            props: {y:150, x:350, alpha:1},
+            ease: "backOut"
+        });
+        bubbleIntroText.text = "Hi, I'm Doggo, the one and only space dog!";
+        bubbleIntroText.animate({
+            props: {y:800, x:-100},
+            from: true,
+            ease: "backOut",
+            wait: 300
+        });
+    });
+
+    timeout(3000, function (){
+        bubbleIntroText.text = "I stopped here on planet earth, when my Spacecraft ran out of fuel.";
+    });
+
+    timeout(6000, function (){
+        bubbleIntroText.text = "But I really need to get back to my home planet mars to complete a mission...";
+    });
+
+    timeout(9000, function(){
+        bubbleIntroText.text = "Can you please help me get back home to mars?";
+        acceptBtn.loc(430,350);
+    });
+
+    //CALL FIRST LEVEL WHEN BUTTON IS PRESSED
+        acceptBtn.on("pressup", function(){
+            dog.removeFrom();
+            acceptBtn.removeFrom();
+            bubbleIntroText.removeFrom();
+            bubbleIntroImg.removeFrom();
+            makeSpaceShip();
+        });
+    }
+
+    // function makeIntro() {
+
+    //     var title = new Label({
+    //                 text: "SPACE SAILOR",
+    //                 size: 72,
+    //                 font: "Bubblegum Sans",
+    //                 color: white,
+    //                 // backgroundColor: red,
+    //                 // shiftVertical: 4
+    //             }).pos(30, 30).ske(10).animate({
+    //                 props: {
+    //                     alpha: .4
+    //                 },
+    //                 wait: 2000
+    //             });
+
+    //     var intro = new Container().addTo();
+
+    //             var backdrop = new Rectangle(stageW, stageH)
+    //                 .addTo(intro)
+    //                 .linearGradient(["#bc1717", "#040313"], [0, 1], 0, 0, 0, stageH);
+    //             title.clone().centerReg(intro).sca(2).pos(0, 100, CENTER, TOP, intro);
+
+    //             var label = new Label({
+    //                 text: "Build spaceship",
+    //                 font: "Bubblegum Sans",
+    //                 color: "white",
+    //                 size: 20,
+    //                 align: "center"
+    //             }).addTo(intro).centerReg();
+
+    //             //Play game button
+    //             new Button({
+    //                 label:label,
+    //                 width:260,
+    //                 height:120,
+    //                 backgroundColor:"black",
+    //                 rollBackgroundColor:"grey",
+    //                 borderWidth:8,
+    //                 borderColor:"grey",
+    //                 // gradient:.3,
+    //                 corner:12
+    //                 }).addTo(intro)
+    //                 .centerReg()
+    //                 .pos(0, 100, CENTER, BOTTOM)
+    //                 .wiggle("rotation", 1, 2, 6, 500, 1000)
+    //                 .tap(function() {
+    //                     intro
+    //                         .cache()
+    //                         .animate({
+    //                             y: -stageH
+    //                         }, 700);
+    //                     stage.update()
+    //                 });
+    //     }
+
+
+
+    // var backdrop = new Rectangle(stageW, stageH).linearGradient(["#056da4", "#011339"], [0,1], 1,1, stageW, 0).addTo().bot();
+
+    // var starsContainer = new Container(stageW*1.3, stageH*1.3).center();
+        
+    // var stars = new Circle(18, yellow).centerReg();
+    
+    // var planet = frame.asset("earth.png").sca(1)
+    //     .center()
+    //     .top()
+    //     .pos(0,150,CENTER,TOP);
+    
+    // loop(60, function(){
+    //     stars
+    //     .clone()
+    //     .sca(rand(0.1, 0.2, 0.5))
+    //     .alp(0.5)
+    //     .loc(rand(starsContainer.width), rand(starsContainer.height), starsContainer);
+        
+    //     if(stars.hitTestCircle(stars, 15)){
+    //         stars.removeFrom();
+    //     }
+    // });
+    
+    // new Scroller(starsContainer);
+
+    // var instructions = new Label({
+    //     text:"Join the parts and help it fly",
+    //     font: "Bubblegum Sans",
+    //     color:white,
+    //     paddingHorizontal:100,
+    //     size:72,
+    //     align:"center"
+    // }).centerReg().alp(1).pos(0,30,CENTER);
+
+    // var spaceship;
+    // var hitRectangle;
+
+    // var smokeParticle = new Circle(80, grey);
+    // var smoke = new Emitter({
+    //     obj:smokeParticle,
+    //     life: 700,
+    //     force: 2,
+    // });
 
     
     makeSpaceShip();
-    // stageMars();
+    // stageMercury();
     // stageRover();
     makeIntro();
      
@@ -459,24 +574,27 @@ frame.on("ready", function() {
             // // strokeObj:{ignoreScale:true}
             // }).sca(1.0).center().pos(30, 100, CENTER, TOP).alp(0.2);
 
+            doggoBoy.on("pressup", function(){
+                var count = 0;
+                if (doggoBoy.hitTestRect(hitRectangle2, 6)) {
+                    count++;
+                    // zog(count);
+                }
+            })
+
             parts.on("pressup", function(){
                 var count = 0;
                 parts.loop(function (part) {
                     if (part.hitTestRect(hitRectangle2, 6)) {
                         count++;
-                        zog(count);
+                        zog("Hello Count New");
                         baseBody.animate({
                             props:{alpha:0}
                         })
                     }
                 })
 
-            doggoBoy.on("pressup", function(){
-                if (doggoBoy.hitTestRect(hitRectangle2, 6)) {
-                    count++;
-                    zog(count);
-                }
-            })
+            
 
             if(doggoBoy.hitTestRect(hitRectangle2, 6)){
                 count++;
@@ -494,7 +612,8 @@ frame.on("ready", function() {
                     
             zog(parts.getChildIndex(body))
 
-            if(count == parts.numChildren + 1){ 
+            if(count == parts.numChildren){
+                radar.top(); 
                 zog("Done");
                 zog(parts.numChildren);
                 parts.addTo(roverContainer);
