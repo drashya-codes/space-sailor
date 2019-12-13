@@ -28,6 +28,65 @@ frame.on("ready", function() {
     var stage = frame.stage;
     var stageW = frame.width;
     var stageH = frame.height;
+
+    function makeIntro() {
+
+        var title = new Label({
+                    text: "SPACE SAILOR",
+                    size: 72,
+                    font: "Bubblegum Sans",
+                    color: white,
+                    // backgroundColor: red,
+                    // shiftVertical: 4
+                }).pos(30, 30).ske(10).animate({
+                    props: {
+                        alpha: .4
+                    },
+                    wait: 2000
+                });
+
+        var intro = new Container().addTo();
+
+                var backdrop = new Rectangle(stageW, stageH)
+                    .addTo(intro)
+                    .linearGradient(["#bc1717", "#040313"], [0, 1], 0, 0, 0, stageH);
+                title.clone().centerReg(intro).sca(2).pos(0, 100, CENTER, TOP, intro);
+
+                var label = new Label({
+                    text: "Build spaceship",
+                    font: "Bubblegum Sans",
+                    color: "white",
+                    size: 20,
+                    align: "center"
+                }).addTo(intro).centerReg();
+
+                //Play game button
+                new Button({
+                    label:label,
+                    width:260,
+                    height:120,
+                    backgroundColor:"black",
+                    rollBackgroundColor:"grey",
+                    borderWidth:8,
+                    borderColor:"grey",
+                    // gradient:.3,
+                    corner:12
+                    }).addTo(intro)
+                    .centerReg()
+                    .pos(0, 100, CENTER, BOTTOM)
+                    .wiggle("rotation", 1, 2, 6, 500, 1000)
+                    .tap(function() {
+                        intro
+                            .cache()
+                            .animate({
+                                y: -stageH
+                            }, 700);
+                        stage.update()
+                    });
+        }
+
+
+
     var backdrop = new Rectangle(stageW, stageH).linearGradient(["#056da4", "#011339"], [0,1], 1,1, stageW, 0).addTo().bot();
 
     var starsContainer = new Container(stageW*1.3, stageH*1.3).center();
@@ -38,12 +97,6 @@ frame.on("ready", function() {
         .center()
         .top()
         .pos(0,150,CENTER,TOP);
-    
-    // var planet = new Circle (stageW, grey)
-    //     .center()
-    //     .top()
-    //     .pos(0,550,CENTER,TOP)
-    //     .linearGradient([red, orange], [1,0], 0,0, stageW,0);
     
     loop(60, function(){
         stars
@@ -70,16 +123,18 @@ frame.on("ready", function() {
 
     var spaceship;
     var hitRectangle;
+
     var smokeParticle = new Circle(80, grey);
     var smoke = new Emitter({
         obj:smokeParticle,
-        life: 500,
-        force: 4
+        life: 700,
+        force: 2,
     });
 
+    
     makeSpaceShip();
-    stageMars();
-    stageRover();
+    // stageMars();
+    // stageRover();
     makeIntro();
      
     function makeSpaceShip() {
@@ -90,7 +145,6 @@ frame.on("ready", function() {
         var orbiter = frame.asset("Orbiter.png").sca(0.25).drag().alp(0);
         var rockets = frame.asset("Rockets.png").sca(0.25).drag().alp(0);
         var tank = frame.asset("Tank.png").sca(0.25).drag().alp(0);
-        // var rockets = frame.asset("Rockets.png").sca(0.3).drag().centerReg(rocketContainer);
 
         var baseTank = frame.asset("baseTank.png").sca(0.25).centerReg().alp(0.5);
         hitRectangle = new Rectangle(200, 50).alp(0).centerReg();
@@ -139,7 +193,7 @@ frame.on("ready", function() {
                     props: {y: 150 + stageH},
                     wait: 400,
                     time: 2000,
-                    call: stageMars,
+                    call: stageMercury,
                 });
             }
         });
@@ -147,15 +201,15 @@ frame.on("ready", function() {
         stage.update();
     } // end function makeSpaceShip
 
-    function stageMars(){
+    function stageMercury(){
         instructions = new Label({
-            text:"We are Mercury and it's really hot here.",
+            text:"We are on Mercury now and it's really hot here.",
             font: "Bubblegum Sans",
             color:white,
             paddingHorizontal:100,
             size:56,
             align:"center"
-        }).centerReg().alp(.9).pos(0,30,CENTER);
+        }).centerReg().alp(.9).pos(0,30,CENTER).top();
 
         var backdropMercury = new Rectangle(stageW, stageH).linearGradient(["#bc1717", "#040313"], [0,1], 1,1, stageW, 0).addTo();
 
@@ -186,13 +240,7 @@ frame.on("ready", function() {
         var coolingPodClone = coolingPod.clone().drag()
         var seriesMercury = series(coolingPod, coolingPodClone);
 
-        var smokeParticle = new Circle(80, grey);
-        var smoke = new Emitter({
-            obj:smokeParticle,
-            life: 500,
-            force: 3
-        }).centerReg(spaceship).mov(0,200).ord(-1)
-
+        instructions.top();
 
         spaceship
             .top()
@@ -249,7 +297,7 @@ frame.on("ready", function() {
     }
 
     function stageRover(){
-        instructions.text = "We are on Mars. Doggo is almost home!"
+        instructions.text = "We are on Mars. Doggo is almost home!";
 
         var backdropMars = new Rectangle(stageW, stageH).linearGradient(["#3f296a", "#040313"], [0,1], 1,1, stageW, 0).addTo();
 
@@ -282,11 +330,13 @@ frame.on("ready", function() {
         var wheels = frame.asset("wheels.png").sca(0.8).drag().alp(0);
         var radar = frame.asset("radar.png").sca(0.8).drag().alp(0);
         var scope = frame.asset("scope.png").sca(0.8).drag().alp(0);
-        var baseBody = frame.asset("baseBody.png").sca(0.8).alp(0.8).centerReg(roverContainer).mov(-250,50).rot(-20);
+        var baseBody = frame.asset("baseBody.png").sca(0.8).alp(0.4).centerReg(roverContainer).mov(-250,50).rot(-20);
         // hitRectangle = new Rectangle(200, 50).alp(1).centerReg();
-        var doggoBoy = frame.asset("doggoBoy.png").sca(0.2).centerReg(roverContainer);
-        
-        hitRectangle.rot(90);
+        var doggoBoy = frame.asset("doggoBoy.png").sca(0.2).centerReg(roverContainer).alp(0);
+
+        instructions.top();
+
+        hitRectangle.rot(90).mov(-250,50).alp(0.8);
         hitRectangle.width = 300;
         // hitRectangle.mov(-250,50).rot(90).alp(0.1);
         // hitRectangle.width = 300;
@@ -320,8 +370,12 @@ frame.on("ready", function() {
                 props:{x:1000, y: 200},
                 ease:"linear",
                 time: 4000,
-            })
-            doggoLands();
+                wait: 1000,
+                call: function(){
+                    doggoLands()
+                }
+            });
+            // doggoLands();
             // doggoBoy.centerReg().animate({
             //     props: {
             //         path: dogPath,
@@ -349,15 +403,16 @@ frame.on("ready", function() {
             // });
 
             function doggoLands(){
-                doggoBoy.centerReg().animate({
+                doggoBoy.centerReg().drag().animate({
                     props: {
+                        alpha: 1,
                         path: dogPath,
                         orient: false
                     },
                     // drag:true,
                     ease: "linear",
                     time: 4000,
-                    wait: 1000,
+                    // wait: 1000,
                     loop: false,
                 });
             }
@@ -412,88 +467,87 @@ frame.on("ready", function() {
         })
     }
 
+    // function makeIntro() {
 
-    function makeIntro() {
+    //     var intro = new Container(stageW, stageH).addTo();
 
-        var intro = new Container(stageW, stageH).addTo();
+    //     new Rectangle(stageW, stageH+500, dark).addTo(intro).mov(0,-500);
 
-        new Rectangle(stageW, stageH+500, dark).addTo(intro).mov(0,-500);
+    //     var message = new Label({
+    //         text:"Help the Doggo to reach his home planet on Mars",
+    //         color:white,
+    //         fontOptions:"italic"
+    //     });
 
-        var message = new Label({
-            text:"Help the Doggo to reach his home planet on Mars",
-            color:white,
-            fontOptions:"italic"
-        });
+    //     new LabelLetters({
+    //         label:message,
+    //         letterSpacing:0,
+    //         valign:"center"
+    //     })
+    //         .centerReg(intro)
+    //         .pos(0,130,CENTER)
+    //         .animate({
+    //             props:{scale:0},
+    //             from:true,
+    //             ease:"backOut",
+    //             time:1000
+    //         })
+    //         .animate({
+    //             from:true,
+    //             props:{scaleY:0, alpha:0},
+    //             time:200,
+    //             sequence:10,
+    //             rewind:true,
+    //             loop:true,
+    //             loopCount:2,
+    //             call:function(){
+    //                                 intro.animate({
+    //                                     wait:500,
+    //                                     ease:"backIn",
+    //                                     props:{y:-stageH},
+    //                                     time:1500,
+    //                                     call:function(){intro.removeFrom();}
+    //                                 });
+    //                             }
+    //             // call:function () {
+    //             //     var dime = frame.asset("dime.png")
+    //             //         .centerReg(intro)
+    //             //         .sca(.5)
+    //             //         .pos(150,150,LEFT,BOTTOM)
+    //             //         .alp(0)
+    //             //         .animate({alpha:1}, 700)
+    //             //         .drag();
 
-        new LabelLetters({
-            label:message,
-            letterSpacing:0,
-            valign:"center"
-        })
-            .centerReg(intro)
-            .pos(0,130,CENTER)
-            .animate({
-                props:{scale:0},
-                from:true,
-                ease:"backOut",
-                time:1000
-            })
-            .animate({
-                from:true,
-                props:{scaleY:0, alpha:0},
-                time:200,
-                sequence:10,
-                rewind:true,
-                loop:true,
-                loopCount:2,
-                call:function(){
-                                    intro.animate({
-                                        wait:500,
-                                        ease:"backIn",
-                                        props:{y:-stageH},
-                                        time:1500,
-                                        call:function(){intro.removeFrom();}
-                                    });
-                                }
-                // call:function () {
-                //     var dime = frame.asset("dime.png")
-                //         .centerReg(intro)
-                //         .sca(.5)
-                //         .pos(150,150,LEFT,BOTTOM)
-                //         .alp(0)
-                //         .animate({alpha:1}, 700)
-                //         .drag();
+    //             //     var slot = new Rectangle(30,dime.height+10,black,grey)
+    //             //         .centerReg(intro, 1)
+    //             //         .alp(0)
+    //             //         .animate({props:{alpha:1}, time:700, wait:350});
 
-                //     var slot = new Rectangle(30,dime.height+10,black,grey)
-                //         .centerReg(intro, 1)
-                //         .alp(0)
-                //         .animate({props:{alpha:1}, time:700, wait:350});
+    //             //     dime.on("pressmove", function () {
+    //             //         if (dime.hitTestRect(slot, 2)) {
+    //             //             dime.noDrag();
+    //             //             dime.animate({
+    //             //                 props:{x:slot.x, y:slot.y, scaleX:.1, alpha:0},
+    //             //                 time:100,
+    //             //                 call:function(){
+    //             //                     intro.animate({
+    //             //                         wait:500,
+    //             //                         ease:"backIn",
+    //             //                         props:{y:-stageH},
+    //             //                         time:1500,
+    //             //                         call:function(){intro.removeFrom();}
+    //             //                     });
+    //             //                 }
+    //             //             });
+    //             //         }
+    //             //     });
 
-                //     dime.on("pressmove", function () {
-                //         if (dime.hitTestRect(slot, 2)) {
-                //             dime.noDrag();
-                //             dime.animate({
-                //                 props:{x:slot.x, y:slot.y, scaleX:.1, alpha:0},
-                //                 time:100,
-                //                 call:function(){
-                //                     intro.animate({
-                //                         wait:500,
-                //                         ease:"backIn",
-                //                         props:{y:-stageH},
-                //                         time:1500,
-                //                         call:function(){intro.removeFrom();}
-                //                     });
-                //                 }
-                //             });
-                //         }
-                //     });
+    //             //     stage.update();
+    //             // }
+    //         });
 
-                //     stage.update();
-                // }
-            });
-
-        stage.update();
-    } // end function makeIntro
+    //     stage.update();
+    // } // end function makeIntro
 
     stage.update();
 
