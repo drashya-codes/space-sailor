@@ -365,9 +365,9 @@ frame.on("ready", function() {
 
         var seriesMars = series(body, wheels, radar, scope);
 
-        var parts = new Tile(seriesMars, 4, 1, 20)
+        var parts = new Tile(seriesMars, 2, 2, 20)
             .center(roverContainer)
-            .mov(0,250)
+            .mov(200,250)
             .drag()
             .animate({
                 wait:500,
