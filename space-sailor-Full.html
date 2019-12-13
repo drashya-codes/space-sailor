@@ -25,15 +25,17 @@ var frame = new Frame(scaling, width, height, color, outerColor);
 frame.on("ready", function() {
     zog("ready from ZIM Frame"); // logs in console (F12 - choose console)
 
-    var endingBackDrop = new Rectangle(stageW, stageH, "#056da4").addTo();
+    var endingBackDrop = new Rectangle(stageW, stageH, "#011339")
     var ending = new Label({
-        text:"Great Job! Doggo is happy at home.",
+        text:"Great Job! Doggo is happy to be home. He can now complete his mission.",
         font: "Bubblegum Sans",
         color:white,
         paddingHorizontal:100,
         size:72,
-        align:"center"
-    }).centerReg(endingBackDrop).alp(1)//.pos(0,30,CENTER);
+        align:"center",
+        labelWidth: 1000,
+        lineHeight: 100
+    }).centerReg().alp(1);
 
     var stage = frame.stage;
     var stageW = frame.width;
