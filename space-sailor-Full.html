@@ -236,7 +236,7 @@ frame.on("ready", function() {
     
         new Scroller(starsContainerMercury);
 
-        var coolingPod = frame.asset("coolingPod.png").sca(0.6).alp(0).drag();
+        var coolingPod = frame.asset("coolingPod.png").sca(0.2).alp(0).drag();
         var coolingPodClone = coolingPod.clone().drag()
         var seriesMercury = series(coolingPod, coolingPodClone);
 
@@ -334,7 +334,10 @@ frame.on("ready", function() {
         // hitRectangle = new Rectangle(200, 50).alp(1).centerReg();
         var doggoBoy = frame.asset("doggoBoy.png").sca(0.2).centerReg(roverContainer).alp(0);
 
+        var hitRectangle2 = new Rectangle(200,200).centerReg().rot(70).top().mov(-270, 50); 
+
         instructions.top();
+
 
         hitRectangle.rot(90).mov(-250,50).alp(0.8);
         hitRectangle.width = 300;
@@ -425,32 +428,33 @@ frame.on("ready", function() {
             }
             });
 
-        var seriesMars = series(body, wheels, radar, scope);
+            var seriesMars = series(body, wheels, radar, scope);
 
-        var parts = new Tile(seriesMars, 4, 1, 20)
-            .center(roverContainer)
-            .mov(0,250)
-            .drag()
-            .animate({
-                wait:500,
-                props:{alpha:1},
-                sequence:500,
-                time:1000 
-            })
-            .top();
+            var parts = new Tile(seriesMars, 4, 1, 20)
+                .center(roverContainer)
+                .mov(0,250)
+                .drag()
+                .animate({
+                    wait:500,
+                    props:{alpha:1},
+                    sequence:500,
+                    time:1000 
+                })
+                .top()
+                .rot(-20);
 
-        parts.on("pressup", function(){
-            var count = 0;
-            parts.loop(function (part) {
-                if (part.hitTestRect(hitRectangle, 6)) {
-                    count++;
-                    zog(count);
-                    baseBody.animate({
-                        props:{alpha:0}
-                    })
-                }
-            })
-        
+            parts.on("pressup", function(){
+                var count = 0;
+                parts.loop(function (part) {
+                    if (part.hitTestRect(hitRectangle2, 6)) {
+                        count++;
+                        zog(count);
+                        baseBody.animate({
+                            props:{alpha:0}
+                        })
+                    }
+                })
+                    
             zog(parts.getChildIndex(body))
 
             if(count == parts.numChildren){ 
