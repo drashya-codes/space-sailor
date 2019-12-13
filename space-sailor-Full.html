@@ -18,7 +18,7 @@ var width = 1280;
 var height = 720;
 var color = dark;
 var outerColor = dark;
-var assets = ["Rockets.png", "Orbiter.png", "Tank.png", "baseTank.png", "earth.png", "mars.png", "mercury.png", "coolingPod.png", "body.png", "wheels.png", "radar.png", "scope.png", "baseBody.png", "doggoBoy.png"];
+var assets = ["Rockets.png", "Orbiter.png", "Tank.png", "baseTank.png", "earth.png", "mars.png", "mercury.png", "coolingPod.png", "body.png", "wheels.png", "radar.png", "scope.png", "baseBody.png", "doggoBoy.png", "bubble.png", "bubbleIntro.png"];
 var path = "Final-assets/";
 
 var frame = new Frame(scaling, width, height, color, outerColor, assets, path);
@@ -61,11 +61,11 @@ frame.on("ready", function() {
         paddingHorizontal:100,
         size:56,
         align:"center"
-    }).centerReg().alp(.9).pos(0,30,CENTER);
+    }).centerReg().alp(.9).pos(0,30,CENTER).bot();
     var spaceship;
     var hitRectangle;
 
-    var dog = frame.asset("doggoBoy.png");
+    var doggoBoy = frame.asset("doggoBoy.png");
     var bubbleImg = frame.asset("bubble.png").sca(0.32);
     var bubble = new Container().addTo();
     var bubbleText = new Label({
@@ -102,7 +102,7 @@ frame.on("ready", function() {
 
     //TEXT FOR INTRO
     timeout(1000, function(){
-        dog.loc(10,500)
+        doggoBoy.loc(10,500)
         .animate({
             props: {y:800, x:-100},
             from: true,
@@ -136,7 +136,7 @@ frame.on("ready", function() {
 
     //CALL FIRST LEVEL WHEN BUTTON IS PRESSED
         acceptBtn.on("pressup", function(){
-            dog.removeFrom();
+            doggoBoy.removeFrom();
             acceptBtn.removeFrom();
             bubbleIntroText.removeFrom();
             bubbleIntroImg.removeFrom();
@@ -202,57 +202,60 @@ frame.on("ready", function() {
 
 
 
-    // var backdrop = new Rectangle(stageW, stageH).linearGradient(["#056da4", "#011339"], [0,1], 1,1, stageW, 0).addTo().bot();
+    var backdrop = new Rectangle(stageW, stageH).linearGradient(["#056da4", "#011339"], [0,1], 1,1, stageW, 0).addTo().bot();
 
-    // var starsContainer = new Container(stageW*1.3, stageH*1.3).center();
+    var starsContainer = new Container(stageW*1.3, stageH*1.3).center();
         
-    // var stars = new Circle(18, yellow).centerReg();
+    var stars = new Circle(18, yellow).centerReg();
     
-    // var planet = frame.asset("earth.png").sca(1)
-    //     .center()
-    //     .top()
-    //     .pos(0,150,CENTER,TOP);
+    var planet = frame.asset("earth.png").sca(1)
+        .center()
+        .top()
+        .pos(0,150,CENTER,TOP);
     
-    // loop(60, function(){
-    //     stars
-    //     .clone()
-    //     .sca(rand(0.1, 0.2, 0.5))
-    //     .alp(0.5)
-    //     .loc(rand(starsContainer.width), rand(starsContainer.height), starsContainer);
+    loop(60, function(){
+        stars
+        .clone()
+        .sca(rand(0.1, 0.2, 0.5))
+        .alp(0.5)
+        .loc(rand(starsContainer.width), rand(starsContainer.height), starsContainer);
         
-    //     if(stars.hitTestCircle(stars, 15)){
-    //         stars.removeFrom();
-    //     }
-    // });
+        if(stars.hitTestCircle(stars, 15)){
+            stars.removeFrom();
+        }
+    });
     
-    // new Scroller(starsContainer);
+    new Scroller(starsContainer);
 
-    // var instructions = new Label({
-    //     text:"Join the parts and help it fly",
-    //     font: "Bubblegum Sans",
-    //     color:white,
-    //     paddingHorizontal:100,
-    //     size:72,
-    //     align:"center"
-    // }).centerReg().alp(1).pos(0,30,CENTER);
+    var spaceship;
+    var hitRectangle;
 
-    // var spaceship;
-    // var hitRectangle;
+    var smokeParticle = new Circle(80, grey);
+    var smoke = new Emitter({
+        obj:smokeParticle,
+        life: 700,
+        force: 2,
+    });
 
-    // var smokeParticle = new Circle(80, grey);
-    // var smoke = new Emitter({
-    //     obj:smokeParticle,
-    //     life: 700,
-    //     force: 2,
-    // });
-
-    
+    var instructions;
     makeSpaceShip();
-    // stageMercury();
-    // stageRover();
-    makeIntro();
+    stageMercury();
+    stageRover();
+    // makeIntro();
      
     function makeSpaceShip() {
+
+        planet.alp(1);
+        instructions.alp(1);
+
+        instructions = new Label({
+            text:"Join the parts and help it fly",
+            font: "Bubblegum Sans",
+            color:white,
+            paddingHorizontal:100,
+            size:72,
+            align:"center"
+        }).centerReg().alp(1).pos(0,30,CENTER);
 
         spaceship = new Container(stageW, stageH);
         // var rocketContainer = new Container().drag({all:true});
@@ -313,6 +316,46 @@ frame.on("ready", function() {
             }
         });
 
+        parts.getChildAt(0).text="That's the Orbiter";
+        parts.getChildAt(1).text = "That's an External fuel tank";
+        parts.getChildAt(2).text = "That's a Solid Rocket Booster";
+
+        //DOG ANIMATION
+        parts.on("mouseover", function(e){
+            doggoBoy.loc(10,500)
+            .animate({
+                props: {y:700, x:0},
+                from: true,
+                time: 900,
+                ease: "backOut"
+            });
+            bubble.loc(150,380)
+            .animate({
+                props: {y:700, x:100},
+                from: true,
+                time: 900,
+                ease: "backOut"
+            }).top();
+            bubbleText.text = e.target.text;
+            bubbleImg.pos(30,300, LEFT, BOTTOM, bubble).ord(-1);
+
+        });
+
+        parts.on("mouseout", function(){
+            doggoBoy.animate({
+                props: {y:stageH, x:0},
+                time: 900,
+                ease: "backOut"
+            });
+
+            bubble.loop(function(bub){
+                bubble.animate({
+                    props: {y:900, x:-30},
+                    time: 900,
+                    ease: "backOut"
+                });
+            });
+        });
         stage.update();
     } // end function makeSpaceShip
 
@@ -381,6 +424,45 @@ frame.on("ready", function() {
                     time:1000
                 });
 
+        parts.getChildAt(0).text="Those are the cooling pods";
+        parts.getChildAt(1).text = "Those are the cooling pods";
+
+        //DOG ANIMATION FOR PARTS
+        parts.on("mouseover", function(e){
+            doggoBoy.loc(10,500)
+            .animate({
+                props: {y:700, x:0},
+                from: true,
+                time: 900,
+                ease: "backOut"
+            }).top();
+            bubble.loc(150,380)
+            .animate({
+                props: {y:700, x:100},
+                from: true,
+                time: 900,
+                ease: "backOut"
+            }).top();
+            bubbleText.text = e.target.text;
+            bubbleImg.pos(30,300, LEFT, BOTTOM, bubble);
+
+        });
+
+        parts.on("mouseout", function(){
+            doggoBoy.animate({
+                props: {y:stageH, x:0},
+                time: 900,
+                ease: "backOut"
+            }).top();
+
+            bubble.loop(function(bub){
+                bubble.animate({
+                    props: {y:900, x:-30},
+                    time: 900,
+                    ease: "backOut"
+                });
+            });
+        });
 
             parts.on("pressup", function(){
                 var count = 0;
@@ -445,13 +527,13 @@ frame.on("ready", function() {
         var wheels = frame.asset("wheels.png").sca(0.8).drag().alp(0);
         var radar = frame.asset("radar.png").sca(0.8).drag().alp(0);
         var scope = frame.asset("scope.png").sca(0.8).drag().alp(0);
-        var baseBody = frame.asset("baseBody.png").sca(0.6).alp(0.4).centerReg(roverContainer).mov(-250,50).rot(-20);
+        var baseBody = frame.asset("baseBody.png").sca(0.5).alp(0.4).centerReg(roverContainer).mov(-250,85).rot(-20);
         // hitRectangle = new Rectangle(200, 50).alp(1).centerReg();
         var doggoBoy = frame.asset("doggoBoy.png").sca(0.2).centerReg(roverContainer).alp(0);
 
         hitRectangle.removeFrom();
 
-        var hitRectangle2 = new Rectangle(150, 150).centerReg().rot(70).top().mov(-270, 50).alp(0); 
+        var hitRectangle2 = new Rectangle(150, 150).centerReg().rot(70).top().mov(-250, 85).alp(0.2).sca(0.8); 
 
         instructions.top();
 
@@ -550,14 +632,14 @@ frame.on("ready", function() {
 
             var parts = new Tile(seriesMars, 2, 2, 20)
                 .center(roverContainer)
-                .mov(-370, -50)
+                .mov(-370, 30)
                 .drag()
                 .animate({
                     wait:500,
                     props:{alpha:1},
                     sequence:500,
                     time:1000 
-                }).top().rot(-20).sca(0.8);
+                }).top().rot(-20).sca(0.6);
 
             // var roverPath = new Squiggle({
             // // points: 3,
@@ -574,32 +656,74 @@ frame.on("ready", function() {
             // // strokeObj:{ignoreScale:true}
             // }).sca(1.0).center().pos(30, 100, CENTER, TOP).alp(0.2);
 
+            var count = 0;
             doggoBoy.on("pressup", function(){
-                var count = 0;
-                if (doggoBoy.hitTestRect(hitRectangle2, 6)) {
-                    count++;
-                    // zog(count);
-                }
+                // if (doggoBoy.hitTestRect(hitRectangle2, 6)) {
+                //     count++;
+                    checkAnswer();
+                //     // zog(count);
+                // }
             })
 
-            parts.on("pressup", function(){
-                var count = 0;
-                parts.loop(function (part) {
-                    if (part.hitTestRect(hitRectangle2, 6)) {
-                        count++;
-                        zog("Hello Count New");
-                        baseBody.animate({
-                            props:{alpha:0}
-                        })
-                    }
+            var count = 0;
+            parts.on("pressup", function(){  
+                // parts.loop(function (part) {
+                //     if (part.hitTestRect(hitRectangle2, 6)) {
+                //         count++;
+                //         // zog("Hello Count New");
+                //         baseBody.animate({
+                //             props:{alpha:0}
+                //         })
+                        checkAnswer();
+                //     }
                 })
+                
+            
+                function checkAnswer(){
+                    var count = 0;
+                    if (doggoBoy.hitTestRect(hitRectangle2, 6)) {
+                        count++;
+                        // checkAnswer();
+                        // zog(count);
+                    }
+                    parts.loop(function (part) {
+                        if (part.hitTestRect(hitRectangle2, 6)) {
+                            count++;
+                            // zog("Hello Count New");
+                            baseBody.animate({
+                                props:{alpha:0}
+                            })
+                            // checkAnswer();
+                        }
+                    })
+                    if(count == parts.numChildren + 1){
+                        radar.top(); 
+                        zog("Done");
+                        zog(parts.numChildren);
+                        parts.addTo(roverContainer);
+                        roverContainer.animate({
+                            props: {
+                                x:  150 - stageW,
+                                y: stageH - 100,
+                            },
+                            // props: {
+                            //     path: roverPath,
+                            //     orient: false,
+                            // },
+                            wait: 500,
+                            time: 2000,
+                            call: function() { endGame(); },
+                        });
+                    }
+                }
 
             
 
-            if(doggoBoy.hitTestRect(hitRectangle2, 6)){
-                count++;
-                zog(count);
-            }
+            // if(doggoBoy.hitTestRect(hitRectangle2, 6)){
+            //     count++;
+            //     zog(count);
+            //     checkAnswer();
+            // }
             
             // frame.on("keydown", function (e) {
             // // zog(e.keyCode); // tells us what key was pressed
@@ -610,27 +734,41 @@ frame.on("ready", function() {
             // });
 
                     
-            zog(parts.getChildIndex(body))
+            // zog(parts.getChildIndex(body));
 
-            if(count == parts.numChildren){
-                radar.top(); 
-                zog("Done");
-                zog(parts.numChildren);
-                parts.addTo(roverContainer);
-                roverContainer.animate({
-                    props: {
-                        x:  150 - stageW,
-                        y: stageH - 100,
-                    },
-                    // props: {
-                    //     path: roverPath,
-                    //     orient: false,
-                    // },
-                    wait: 500,
-                    time: 2000,
-                });
-            }
-        })
+            // if(count == parts.numChildren){
+            //     radar.top(); 
+            //     zog("Done");
+            //     zog(parts.numChildren);
+            //     parts.addTo(roverContainer);
+            //     roverContainer.animate({
+            //         props: {
+            //             x:  150 - stageW,
+            //             y: stageH - 100,
+            //         },
+            //         // props: {
+            //         //     path: roverPath,
+            //         //     orient: false,
+            //         // },
+            //         wait: 500,
+            //         time: 2000,
+            //     });
+            // }
+        // })
+    }
+
+    function endGame(){
+        var endingBackDrop = new Rectangle(stageW, stageH, "#011339").top();
+        var ending = new Label({
+            text:"Great Job! Doggo is happy to be home.",
+            font: "Bubblegum Sans",
+            color:white,
+            paddingHorizontal:100,
+            size:72,
+            align:"center",
+            labelWidth: 1000,
+            lineHeight: 100
+        }).centerReg().alp(1).top();
     }
 
     stage.update();
